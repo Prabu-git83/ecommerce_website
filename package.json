@@ -1,0 +1,22 @@
+{
+  "name": "ecommerce-platform",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "backend",
+    "website"
+  ],
+  "scripts": {
+    "infra:up": "docker compose up -d postgres redis minio mailpit",
+    "infra:down": "docker compose down",
+    "infra:logs": "docker compose logs -f",
+    "db:migrate": "npm run db:migrate --workspace backend",
+    "db:seed": "npm run db:seed --workspace backend",
+    "dev:backend": "npm run dev --workspace backend",
+    "dev:website": "npm run dev --workspace website",
+    "dev": "concurrently -n backend,website -c blue,magenta \"npm run dev:backend\" \"npm run dev:website\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
