@@ -1,7 +1,15 @@
 import type { FastifyInstance } from "fastify";
 import * as authService from "./service";
 import { mergeGuestCartIntoUser } from "../cart/service";
-import { registerSchema, loginSchema, refreshSchema, forgotPasswordSchema, resetPasswordSchema } from "./schemas";
+import {
+  registerSchema,
+  loginSchema,
+  refreshSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  otpRequestSchema,
+  otpVerifySchema,
+} from "./schemas";
 import { ok } from "../../lib/response";
 import { db } from "../../db/client";
 import { customerProfiles } from "../../db/schema/index";
@@ -52,6 +60,21 @@ export default async function authRoutes(app: FastifyInstance) {
     const body = resetPasswordSchema.parse(request.body);
     await authService.resetPassword(body.token, body.password);
     return ok({ success: true });
+  });
+
+  app.post("/auth/otp/request", async (request) => {
+    const body = otpRequestSchema.parse(request.body);
+    await authService.requestLoginOtp(body.email);
+    // Always the same response, whether or not the account exists (no user enumeration).
+    return ok({ success: true, message: "If that email is registered, a sign-in code is on its way." });
+  });
+
+  app.post("/auth/otp/verify", async (request) => {
+    const body = otpVerifySchema.parse(request.body);
+    const deviceInfo = request.headers["user-agent"] as string | undefined;
+    const { user, accessToken, refreshToken } = await authService.verifyLoginOtp(body.email, body.code, deviceInfo);
+    await mergeGuestCartIntoUser(request.cartToken, user.id);
+    return ok({ user: publicUser(user), accessToken, refreshToken });
   });
 
   app.get("/customers/me", async (request) => {

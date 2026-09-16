@@ -1,7 +1,7 @@
 import { randomBytes, createHash } from "node:crypto";
-import { eq } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
 import { db } from "../../db/client";
-import { users, customerProfiles, refreshTokens, passwordResetTokens } from "../../db/schema/index";
+import { users, customerProfiles, refreshTokens, passwordResetTokens, emailOtps } from "../../db/schema/index";
 import { hashPassword, verifyPassword } from "../../lib/password";
 import { signAccessToken, generateRefreshTokenValue, hashRefreshToken, refreshTokenExpiry } from "../../lib/jwt";
 import { ApiError } from "../../lib/errors";
@@ -105,4 +105,77 @@ export async function resetPassword(token: string, newPassword: string) {
   await db.update(passwordResetTokens).set({ usedAt: new Date() }).where(eq(passwordResetTokens.id, record.id));
   // Revoke all active sessions on password change
   await db.update(refreshTokens).set({ revokedAt: new Date() }).where(eq(refreshTokens.userId, record.userId));
+}
+
+const OTP_TTL_MINUTES = 10;
+const OTP_MAX_ATTEMPTS = 5;
+const OTP_RESEND_COOLDOWN_SECONDS = 45;
+
+// The code itself is never persisted — only a hash salted with the user's id
+// and peppered with a server secret, so a 6-digit code can't be reversed
+// from a DB dump the way a plain/unsalted hash of a low-entropy value could.
+function hashOtpCode(code: string, userId: string) {
+  return createHash("sha256").update(`${code}:${userId}:${env.JWT_ACCESS_SECRET}`).digest("hex");
+}
+
+function generateOtpCode() {
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
+
+export async function requestLoginOtp(email: string) {
+  const user = await db.query.users.findFirst({ where: eq(users.email, email.toLowerCase()) });
+  // Same response whether or not the account exists (no user enumeration) —
+  // and silently skip sending if one was just issued, rather than surfacing
+  // a distinguishable "please wait" error.
+  if (!user) return;
+
+  const recent = await db.query.emailOtps.findFirst({
+    where: and(eq(emailOtps.userId, user.id), isNull(emailOtps.usedAt)),
+    orderBy: [desc(emailOtps.createdAt)],
+  });
+  if (recent && recent.createdAt.getTime() > Date.now() - OTP_RESEND_COOLDOWN_SECONDS * 1000) {
+    return;
+  }
+
+  // Invalidate any still-active previous codes so only the newest one works.
+  await db
+    .update(emailOtps)
+    .set({ usedAt: new Date() })
+    .where(and(eq(emailOtps.userId, user.id), isNull(emailOtps.usedAt)));
+
+  const code = generateOtpCode();
+  await db.insert(emailOtps).values({
+    userId: user.id,
+    codeHash: hashOtpCode(code, user.id),
+    expiresAt: new Date(Date.now() + OTP_TTL_MINUTES * 60 * 1000),
+  });
+
+  await sendMail(user.email, "Your Arca sign-in code", emailTemplates.loginOtp(code, OTP_TTL_MINUTES));
+}
+
+export async function verifyLoginOtp(email: string, code: string, deviceInfo?: string) {
+  const invalidError = () => ApiError.badRequest("That code is invalid or has expired", "invalid_otp");
+
+  const user = await db.query.users.findFirst({ where: eq(users.email, email.toLowerCase()) });
+  if (!user) throw invalidError();
+
+  const record = await db.query.emailOtps.findFirst({
+    where: and(eq(emailOtps.userId, user.id), isNull(emailOtps.usedAt)),
+    orderBy: [desc(emailOtps.createdAt)],
+  });
+  if (!record || record.expiresAt < new Date()) throw invalidError();
+  if (record.attempts >= OTP_MAX_ATTEMPTS) {
+    throw ApiError.badRequest("Too many incorrect attempts — request a new code", "otp_locked");
+  }
+
+  if (hashOtpCode(code, user.id) !== record.codeHash) {
+    await db.update(emailOtps).set({ attempts: record.attempts + 1 }).where(eq(emailOtps.id, record.id));
+    throw invalidError();
+  }
+
+  await db.update(emailOtps).set({ usedAt: new Date() }).where(eq(emailOtps.id, record.id));
+  if (user.status !== "active") throw ApiError.forbidden("Account is not active", "account_inactive");
+
+  const tokens = await issueTokenPair(user.id, deviceInfo);
+  return { user, ...tokens };
 }

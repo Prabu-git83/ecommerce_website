@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import AuthShell from "@/components/AuthShell";
 import Field from "@/components/Field";
+import OtpLoginForm from "@/components/OtpLoginForm";
 import { login } from "@/lib/auth";
 import { ApiClientError } from "@/lib/client-api";
 
@@ -17,9 +18,12 @@ const schema = z.object({
 });
 type FormValues = z.infer<typeof schema>;
 
+type Mode = "password" | "otp";
+
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [mode, setMode] = useState<Mode>("password");
   const [serverError, setServerError] = useState<string | null>(null);
   const {
     register: formRegister,
@@ -27,11 +31,15 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
+  function goToNext() {
+    router.push(searchParams.get("next") ?? "/account");
+  }
+
   async function onSubmit(values: FormValues) {
     setServerError(null);
     try {
       await login(values.email, values.password);
-      router.push(searchParams.get("next") ?? "/account");
+      goToNext();
     } catch (err) {
       setServerError(err instanceof ApiClientError ? err.message : "Something went wrong");
     }
@@ -39,22 +47,42 @@ export default function LoginPage() {
 
   return (
     <AuthShell title="Sign in" subtitle="Welcome back to Arca.">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <Field label="Email" error={errors.email?.message}>
-          <input type="email" {...formRegister("email")} className="w-full" />
-        </Field>
-        <Field label="Password" error={errors.password?.message}>
-          <input type="password" {...formRegister("password")} className="w-full" />
-        </Field>
-        {serverError ? <p className="text-[13px] text-warn">{serverError}</p> : null}
+      <div className="mb-6 flex gap-5 font-mono text-[11px] uppercase tracking-[0.1em] text-faint">
         <button
-          type="submit"
-          disabled={isSubmitting}
-          className="btn-pill mt-2 flex h-12 items-center justify-center bg-ink font-body text-[13.5px] font-medium text-paper disabled:opacity-50"
+          onClick={() => setMode("password")}
+          className={mode === "password" ? "border-b-[1.5px] border-accent pb-0.5 text-accent" : "text-ink"}
         >
-          {isSubmitting ? "Signing in…" : "Sign in"}
+          Password
         </button>
-      </form>
+        <button
+          onClick={() => setMode("otp")}
+          className={mode === "otp" ? "border-b-[1.5px] border-accent pb-0.5 text-accent" : "text-ink"}
+        >
+          Email code
+        </button>
+      </div>
+
+      {mode === "password" ? (
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <Field label="Email" error={errors.email?.message}>
+            <input type="email" {...formRegister("email")} className="w-full" />
+          </Field>
+          <Field label="Password" error={errors.password?.message}>
+            <input type="password" {...formRegister("password")} className="w-full" />
+          </Field>
+          {serverError ? <p className="text-[13px] text-warn">{serverError}</p> : null}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn-pill mt-2 flex h-12 items-center justify-center bg-ink font-body text-[13.5px] font-medium text-paper disabled:opacity-50"
+          >
+            {isSubmitting ? "Signing in…" : "Sign in"}
+          </button>
+        </form>
+      ) : (
+        <OtpLoginForm onSuccess={goToNext} />
+      )}
+
       <div className="mt-5 flex justify-between text-[13px] text-muted">
         <Link href="/forgot-password" className="hover:text-ink">
           Forgot password?

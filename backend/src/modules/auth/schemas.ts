@@ -25,3 +25,12 @@ export const resetPasswordSchema = z.object({
   token: z.string().min(10),
   password: z.string().min(8).max(100),
 });
+
+export const otpRequestSchema = z.object({
+  email: z.string().email(),
+});
+
+export const otpVerifySchema = z.object({
+  email: z.string().email(),
+  code: z.string().length(6, "Enter the 6-digit code"),
+});

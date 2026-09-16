@@ -21,6 +21,17 @@ export async function register(input: { email: string; password: string; firstNa
   return res.user;
 }
 
+export async function requestLoginOtp(email: string) {
+  return apiPost<{ success: boolean; message: string }>("/auth/otp/request", { email });
+}
+
+export async function verifyLoginOtp(email: string, code: string) {
+  const res = await apiPost<AuthResponse>("/auth/otp/verify", { email, code });
+  useAuthStore.getState().setSession(res);
+  await useCartStore.getState().fetchCart();
+  return res.user;
+}
+
 export async function logout() {
   const { refreshToken, clear } = useAuthStore.getState();
   if (refreshToken) {

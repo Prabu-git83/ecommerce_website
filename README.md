@@ -82,14 +82,17 @@ npm run dev:website   # http://localhost:3000
 **Public pages:** Home, product listing (with category/sort/search filters), product
 detail, About Us, Contact Us.
 
-**Customer pages:** Login/register, forgot/reset password, cart, multi-step checkout
-(address → shipping → payment), profile, saved addresses, order history, order detail
-with cancellation.
+**Customer pages:** Login/register (password or emailed one-time code), forgot/reset
+password, cart, multi-step checkout (address → shipping → payment — Card, UPI, Wallet,
+or Cash on Delivery), profile, saved addresses, order history, order detail with
+cancellation.
 
-**Backend:** Auth (JWT + refresh rotation), catalogue (categories/products/variants/
-inventory), guest + authenticated cart with coupon support, checkout with stock
-reservation, mock payment capture, order lifecycle, transactional email (order
-confirmation, password reset, contact acknowledgement) via Mailpit.
+**Backend:** Auth (JWT + refresh rotation, plus email-OTP passwordless login), catalogue
+(categories/products/variants/inventory), guest + authenticated cart with coupon
+support, checkout with stock reservation, mock payment capture (Card/UPI/Wallet capture
+instantly, COD stays `pending` until delivery), order lifecycle, transactional email
+(order confirmation, password reset, sign-in codes, contact acknowledgement) via
+Mailpit.
 
 **Out of scope for Phase 1** (per the blueprint's later phases): admin portal, super
 admin portal, mobile app, real payment gateway integration, Elasticsearch search,

@@ -37,4 +37,12 @@ export const emailTemplates = {
       <p>Hi ${name}, thanks for reaching out — our team will reply within 1-2 business days.</p>
     </div>`;
   },
+  loginOtp(code: string, ttlMinutes: number) {
+    return `<div style="font-family:sans-serif;max-width:480px">
+      <h2>Your sign-in code</h2>
+      <p>Enter this code to sign in to Arca. It expires in ${ttlMinutes} minutes.</p>
+      <p style="font-size:32px;font-weight:700;letter-spacing:0.3em;margin:16px 0">${code}</p>
+      <p style="color:#6E6959;font-size:13px">If you didn't request this, you can safely ignore this email.</p>
+    </div>`;
+  },
 };
