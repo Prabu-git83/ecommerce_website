@@ -15,6 +15,13 @@
       "when": 1789529787412,
       "tag": "0001_condemned_serpent_society",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789550003647,
+      "tag": "0002_brief_sleeper",
+      "breakpoints": true
     }
   ]
 }

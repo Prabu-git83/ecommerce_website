@@ -41,6 +41,7 @@ export const productVariants = pgTable("product_variants", {
   sku: varchar("sku", { length: 100 }).notNull().unique(),
   price: numeric("price", { precision: 12, scale: 2 }).notNull(),
   comparePrice: numeric("compare_price", { precision: 12, scale: 2 }),
+  taxRate: numeric("tax_rate", { precision: 5, scale: 2 }), // percent; null = platform default (18% GST)
   weightGrams: integer("weight_grams"),
   attributes: jsonb("attributes").$type<Record<string, string>>().notNull().default({}),
   isDefault: boolean("is_default").notNull().default(false),

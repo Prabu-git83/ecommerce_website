@@ -5,6 +5,7 @@ import { env } from "./config/env";
 import { registerErrorHandler } from "./plugins/errorHandler";
 import authPlugin from "./plugins/auth";
 import cartPlugin from "./plugins/cart";
+import adminAuthPlugin from "./plugins/adminAuth";
 
 import authRoutes from "./modules/auth/routes";
 import customerRoutes from "./modules/customers/routes";
@@ -13,6 +14,14 @@ import cartRoutes from "./modules/cart/routes";
 import checkoutRoutes from "./modules/checkout/routes";
 import ordersRoutes from "./modules/orders/routes";
 import contactRoutes from "./modules/contact/routes";
+
+import adminAuthRoutes from "./modules/admin/auth/routes";
+import adminDashboardRoutes from "./modules/admin/dashboard/routes";
+import adminProductRoutes from "./modules/admin/products/routes";
+import adminCategoryRoutes from "./modules/admin/categories/routes";
+import adminInventoryRoutes from "./modules/admin/inventory/routes";
+import adminOrderRoutes from "./modules/admin/orders/routes";
+import adminCustomerRoutes from "./modules/admin/customers/routes";
 
 export async function buildApp() {
   const app = Fastify({
@@ -23,7 +32,7 @@ export async function buildApp() {
   });
 
   await app.register(cors, {
-    origin: [env.WEB_APP_URL],
+    origin: [env.WEB_APP_URL, env.ADMIN_APP_URL],
     credentials: true,
   });
   await app.register(cookie, { secret: env.COOKIE_SECRET });
@@ -43,6 +52,20 @@ export async function buildApp() {
       await v1.register(checkoutRoutes);
       await v1.register(ordersRoutes);
       await v1.register(contactRoutes);
+
+      await v1.register(
+        async (admin) => {
+          await admin.register(adminAuthPlugin);
+          await admin.register(adminAuthRoutes);
+          await admin.register(adminDashboardRoutes);
+          await admin.register(adminProductRoutes);
+          await admin.register(adminCategoryRoutes);
+          await admin.register(adminInventoryRoutes);
+          await admin.register(adminOrderRoutes);
+          await admin.register(adminCustomerRoutes);
+        },
+        { prefix: "/admin" }
+      );
     },
     { prefix: "/v1" }
   );

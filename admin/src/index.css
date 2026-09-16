@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Bricolage Grotesque";
+  --font-body: "Source Sans 3";
+  --font-mono: "IBM Plex Mono";
+}
+
+html {
+  background: #f4f0e6;
+}
+
+body {
+  color: #1f1d18;
+  font-family: var(--font-body), sans-serif;
+}
+
+::selection {
+  background: #1f1d18;
+  color: #f4f0e6;
+}
+
+.eyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #9a927d;
+}
+
+.rule {
+  border-bottom: 1px solid #e0daca;
+}
+
+.rule-strong {
+  border-bottom: 1.5px solid #1f1d18;
+}
+
+.btn-pill {
+  border-radius: 9999px;
+  transition: opacity 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-pill:active {
+  opacity: 0.8;
+}
+
+.stripe-placeholder {
+  background-image: repeating-linear-gradient(45deg, #eae4d5, #eae4d5 5px, #e2daca 5px, #e2daca 10px);
+}
+
+input,
+select,
+textarea {
+  background: #f9f6ee;
+  border: 1px solid #ded7c6;
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-family: var(--font-body), sans-serif;
+  font-size: 13.5px;
+  color: #1f1d18;
+  outline: none;
+  width: 100%;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #1f1d18;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #9a927d;
+}
+
+input:disabled {
+  opacity: 0.6;
+}

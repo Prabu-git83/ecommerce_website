@@ -26,6 +26,7 @@ const envSchema = z.object({
   SMTP_FROM: z.string().default("Arca <no-reply@arca.local>"),
 
   WEB_APP_URL: z.string().default("http://localhost:3000"),
+  ADMIN_APP_URL: z.string().default("http://localhost:5173"),
 
   COOKIE_SECRET: z.string().min(8).default("dev_cookie_secret_change_me"),
   CART_COOKIE_NAME: z.string().default("arca_cart"),

@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "workspaces": [
     "backend",
-    "website"
+    "website",
+    "admin"
   ],
   "scripts": {
     "infra:up": "docker compose up -d postgres redis minio mailpit",
@@ -14,7 +15,8 @@
     "db:seed": "npm run db:seed --workspace backend",
     "dev:backend": "npm run dev --workspace backend",
     "dev:website": "npm run dev --workspace website",
-    "dev": "concurrently -n backend,website -c blue,magenta \"npm run dev:backend\" \"npm run dev:website\""
+    "dev:admin": "npm run dev --workspace admin",
+    "dev": "concurrently -n backend,website,admin -c blue,magenta,green \"npm run dev:backend\" \"npm run dev:website\" \"npm run dev:admin\""
   },
   "devDependencies": {
     "concurrently": "^9.1.0"

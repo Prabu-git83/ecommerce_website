@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { db, queryClient } from "./client";
-import { categories, products, productVariants, inventory, warehouses, coupons } from "./schema/index";
+import { categories, products, productVariants, productImages, inventory, warehouses, coupons, adminUsers } from "./schema/index";
+import { hashPassword } from "../lib/password";
 
 function slugify(s: string) {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -41,8 +42,12 @@ async function main() {
     shortDesc: string;
     description: string;
     isFeatured?: boolean;
+    images?: string[];
     variants: SeedVariant[];
   };
+
+  // Deterministic placeholder photography (picsum.photos, seeded by SKU) —
+  // stand-ins for real product photography, which this local build has none of.
 
   const productDefs: SeedProduct[] = [
     {
@@ -51,6 +56,10 @@ async function main() {
       shortDesc: "Adaptive noise cancelling",
       description: "Adaptive noise cancelling, thirty hours with the case, and a fit test in the app. Designed and tuned in Bengaluru.",
       isFeatured: true,
+      images: [
+        "https://picsum.photos/seed/EB-PRO-BLK/900/900",
+        "https://picsum.photos/seed/EB-PRO-BLK-2/900/900",
+      ],
       variants: [
         { name: "Black", sku: "EB-PRO-BLK", price: 6999, comparePrice: 9499, attributes: { color: "Black" }, stock: 12 },
         { name: "Ivory", sku: "EB-PRO-IVR", price: 6999, comparePrice: 9499, attributes: { color: "Ivory" }, stock: 18 },
@@ -61,21 +70,24 @@ async function main() {
       category: "Electronics/Audio",
       shortDesc: "Studio-tuned active noise cancelling",
       description: "Reference-grade drivers with hybrid ANC and a 24-bit DAC over USB-C.",
-      variants: [{ name: "Charcoal", sku: "EB-STU-CHR", price: 11450, attributes: { color: "Charcoal" }, stock: 4 }],
+      images: ["https://picsum.photos/seed/EB-STU-CHR/900/900"],
+      variants: [{ name: "Charcoal", sku: "EB-STU-CHR", price: 11450, comparePrice: 13900, attributes: { color: "Charcoal" }, stock: 4 }],
     },
     {
       name: "Sport Buds Lite",
       category: "Electronics/Audio",
       shortDesc: "Sweat-proof, secure fit",
       description: "IPX5 rated, hooked fit for running, 9-hour battery life.",
-      variants: [{ name: "Standard", sku: "EB-SPT-STD", price: 2299, stock: 40 }],
+      images: ["https://picsum.photos/seed/EB-SPT-STD/900/900"],
+      variants: [{ name: "Standard", sku: "EB-SPT-STD", price: 2299, comparePrice: 2799, stock: 40 }],
     },
     {
       name: "Nova Buds Air",
       category: "Electronics/Audio",
       shortDesc: "Ultra-light everyday earbuds",
       description: "4.5g per earbud, transparent case, 20-hour combined battery.",
-      variants: [{ name: "White", sku: "EB-NOV-WHT", price: 4299, attributes: { color: "White" }, stock: 25 }],
+      images: ["https://picsum.photos/seed/EB-NOV-WHT/900/900"],
+      variants: [{ name: "White", sku: "EB-NOV-WHT", price: 4299, comparePrice: 4999, attributes: { color: "White" }, stock: 25 }],
     },
     {
       name: "Chrono Field Watch",
@@ -83,9 +95,13 @@ async function main() {
       shortDesc: "Hybrid smartwatch, two-week battery",
       description: "Analogue face with a hidden step counter and sleep tracker. Two-week battery life.",
       isFeatured: true,
+      images: [
+        "https://picsum.photos/seed/WA-CHR-STL40/900/900",
+        "https://picsum.photos/seed/WA-CHR-STL40-2/900/900",
+      ],
       variants: [
-        { name: "Steel / 40mm", sku: "WA-CHR-STL40", price: 8999, attributes: { finish: "Steel", size: "40mm" }, stock: 9 },
-        { name: "Black / 44mm", sku: "WA-CHR-BLK44", price: 9499, attributes: { finish: "Black", size: "44mm" }, stock: 6 },
+        { name: "Steel / 40mm", sku: "WA-CHR-STL40", price: 8999, comparePrice: 10499, attributes: { finish: "Steel", size: "40mm" }, stock: 9 },
+        { name: "Black / 44mm", sku: "WA-CHR-BLK44", price: 9499, comparePrice: 10999, attributes: { finish: "Black", size: "44mm" }, stock: 6 },
       ],
     },
     {
@@ -184,6 +200,10 @@ async function main() {
       })
       .returning();
 
+    for (const [idx, url] of (p.images ?? []).entries()) {
+      await db.insert(productImages).values({ productId: product.id, url, alt: p.name, sortOrder: idx });
+    }
+
     for (const [idx, v] of p.variants.entries()) {
       const [variant] = await db
         .insert(productVariants)
@@ -211,7 +231,17 @@ async function main() {
   await db.insert(coupons).values([
     { code: "MONSOON15", type: "percent", value: "15", minSubtotal: "0" },
     { code: "FLAT200", type: "fixed", value: "200", minSubtotal: "1500" },
+    { code: "ELECTRONICS10", type: "percent", value: "10", minSubtotal: "0" },
   ]);
+
+  const adminPasswordHash = await hashPassword("admin123");
+  await db.insert(adminUsers).values({
+    email: "admin@arca.local",
+    passwordHash: adminPasswordHash,
+    name: "Admin",
+    role: "admin",
+  });
+  console.log("Seeded admin user: admin@arca.local / admin123");
 
   console.log(`Seeded ${productDefs.length} products across ${categoryDefs.length} top-level categories.`);
   await queryClient.end();
