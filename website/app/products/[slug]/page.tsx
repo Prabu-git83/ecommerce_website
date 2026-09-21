@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import PlaceholderImage from "@/components/PlaceholderImage";
+import ProductGallery from "@/components/ProductGallery";
 import ProductCard from "@/components/ProductCard";
 import AddToCartPanel from "@/components/AddToCartPanel";
 import { apiGet } from "@/lib/api";
@@ -17,12 +17,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       </div>
 
       <div className="mt-4 grid gap-8 lg:grid-cols-2">
-        <PlaceholderImage
-          src={product.images[0]}
-          alt={product.name}
-          label="product image"
-          className="h-[360px] w-full rounded-lg border border-border sm:h-[440px]"
-        />
+        <ProductGallery images={product.images} alt={product.name} />
 
         <div>
           <h1 className="font-display text-[26px] font-semibold leading-tight text-ink sm:text-[30px]">{product.name}</h1>

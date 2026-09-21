@@ -1,4 +1,5 @@
 import { and, asc, desc, eq, ilike, inArray } from "drizzle-orm";
+import { nanoid } from "nanoid";
 import { db } from "../../../db/client";
 import {
   products,
@@ -10,6 +11,7 @@ import {
 } from "../../../db/schema/index";
 import { slugify } from "../../../lib/slugify";
 import { ApiError } from "../../../lib/errors";
+import { uploadObject } from "../../../lib/storage";
 
 async function uniqueSlug(name: string, excludeId?: string) {
   const base = slugify(name);
@@ -160,6 +162,22 @@ export async function addImage(productId: string, url: string, alt?: string) {
   const [image] = await db
     .insert(productImages)
     .values({ productId, url, alt, sortOrder: existing.length })
+    .returning();
+  return image;
+}
+
+export async function uploadImage(productId: string, filename: string, contentType: string, buffer: Buffer) {
+  const product = await db.query.products.findFirst({ where: eq(products.id, productId) });
+  if (!product) throw ApiError.notFound("Product not found");
+
+  const ext = filename.includes(".") ? filename.slice(filename.lastIndexOf(".")) : "";
+  const key = `products/${productId}/${nanoid()}${ext}`;
+  const url = await uploadObject(key, buffer, contentType);
+
+  const existing = await db.query.productImages.findMany({ where: eq(productImages.productId, productId) });
+  const [image] = await db
+    .insert(productImages)
+    .values({ productId, url, alt: product.name, sortOrder: existing.length })
     .returning();
   return image;
 }

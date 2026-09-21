@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import cookie from "@fastify/cookie";
+import multipart from "@fastify/multipart";
 import { env } from "./config/env";
 import { registerErrorHandler } from "./plugins/errorHandler";
 import authPlugin from "./plugins/auth";
@@ -36,6 +37,9 @@ export async function buildApp() {
     credentials: true,
   });
   await app.register(cookie, { secret: env.COOKIE_SECRET });
+  await app.register(multipart, {
+    limits: { fileSize: 8 * 1024 * 1024, files: 8 },
+  });
 
   registerErrorHandler(app);
   await app.register(authPlugin);

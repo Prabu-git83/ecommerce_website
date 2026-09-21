@@ -1,24 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import PageHeader from "@/components/PageHeader";
 import Field from "@/components/Field";
-import { apiGet, apiPost, apiPut, apiDelete, ApiClientError } from "@/lib/api";
+import { apiGet, apiPost, apiPut, apiDelete, apiUpload, ApiClientError } from "@/lib/api";
 import { formatMoney } from "@/lib/format";
 import type { Category, ProductDetail, Warehouse } from "@/lib/types";
 
-function parseAttributes(input: string): Record<string, string> {
-  const out: Record<string, string> = {};
-  for (const pair of input.split(",")) {
-    const [k, v] = pair.split(":").map((s) => s.trim());
-    if (k && v) out[k.toLowerCase()] = v;
-  }
-  return out;
-}
+const DEFAULT_TAX_RATE = 18;
 
-function attributesToString(attrs: Record<string, string>): string {
-  return Object.entries(attrs)
-    .map(([k, v]) => `${k}:${v}`)
-    .join(", ");
+function taxBreakdown(price: string, taxRate: string) {
+  const p = Number(price) || 0;
+  const rate = taxRate.trim() ? Number(taxRate) : DEFAULT_TAX_RATE;
+  return { rate, amount: (p * rate) / 100 };
 }
 
 export default function ProductForm() {
@@ -195,19 +188,28 @@ function flattenCategories(tree: Category[]): { id: string; name: string; prefix
 }
 
 function ImagesSection({ product, onChange }: { product: ProductDetail; onChange: () => void }) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [showUrlForm, setShowUrlForm] = useState(false);
   const [url, setUrl] = useState("");
-  const [adding, setAdding] = useState(false);
+  const [addingUrl, setAddingUrl] = useState(false);
 
-  async function addImage(e: React.FormEvent) {
-    e.preventDefault();
-    if (!url.trim()) return;
-    setAdding(true);
+  async function handleFiles(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setUploading(true);
+    setUploadError(null);
     try {
-      await apiPost(`/admin/products/${product.id}/images`, { url: url.trim() });
-      setUrl("");
+      const formData = new FormData();
+      Array.from(files).forEach((file) => formData.append("files", file));
+      await apiUpload(`/admin/products/${product.id}/images/upload`, formData);
       onChange();
+    } catch (err) {
+      setUploadError(err instanceof ApiClientError ? err.message : "Could not upload images");
     } finally {
-      setAdding(false);
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }
 
@@ -216,28 +218,59 @@ function ImagesSection({ product, onChange }: { product: ProductDetail; onChange
     onChange();
   }
 
+  async function addImageByUrl(e: React.FormEvent) {
+    e.preventDefault();
+    if (!url.trim()) return;
+    setAddingUrl(true);
+    try {
+      await apiPost(`/admin/products/${product.id}/images`, { url: url.trim() });
+      setUrl("");
+      setShowUrlForm(false);
+      onChange();
+    } finally {
+      setAddingUrl(false);
+    }
+  }
+
   return (
     <div className="rule-strong mt-10 pb-4 pt-2">
       <div className="font-display text-[18px] font-semibold text-ink">Images</div>
       <div className="mt-4 flex flex-wrap gap-3">
         {product.images.map((img) => (
           <div key={img.id} className="group relative h-20 w-20">
-            <img src={img.url} alt={img.alt ?? ""} className="h-full w-full rounded-md border border-border-strong object-cover" />
+            <img src={img.url} alt={img.alt ?? ""} className="h-full w-full rounded-md border border-border object-cover" />
             <button
               onClick={() => removeImage(img.id)}
-              className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-ink text-[11px] text-paper opacity-0 group-hover:opacity-100"
+              className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-warn text-[11px] text-white opacity-0 group-hover:opacity-100"
             >
               ×
             </button>
           </div>
         ))}
-      </div>
-      <form onSubmit={addImage} className="mt-3 flex gap-2">
-        <input placeholder="Image URL" value={url} onChange={(e) => setUrl(e.target.value)} className="!w-80" />
-        <button type="submit" disabled={adding} className="btn-pill border border-border-strong px-4 text-[12.5px] text-ink hover:border-ink">
-          Add
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+          className="flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-md border border-dashed border-border-strong text-faint hover:border-accent hover:text-accent disabled:opacity-50"
+        >
+          <span className="text-[20px] leading-none">{uploading ? "…" : "+"}</span>
+          <span className="text-[10px] font-medium">{uploading ? "Uploading" : "Add photos"}</span>
         </button>
-      </form>
+        <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleFiles} className="hidden" />
+      </div>
+      {uploadError ? <p className="mt-2 text-[12px] text-warn">{uploadError}</p> : null}
+
+      <button type="button" onClick={() => setShowUrlForm((v) => !v)} className="mt-3 text-[11.5px] text-muted hover:text-ink">
+        {showUrlForm ? "Cancel" : "or add via image URL"}
+      </button>
+      {showUrlForm ? (
+        <form onSubmit={addImageByUrl} className="mt-2 flex gap-2">
+          <input placeholder="Image URL" value={url} onChange={(e) => setUrl(e.target.value)} className="!w-80" />
+          <button type="submit" disabled={addingUrl} className="btn-pill border border-border-strong px-4 text-[12.5px] text-ink hover:border-accent">
+            Add
+          </button>
+        </form>
+      ) : null}
     </div>
   );
 }
@@ -266,7 +299,16 @@ function VariantsSection({ product, onChange }: { product: ProductDetail; onChan
 
 function NewVariantForm({ productId, onCreated }: { productId: string; onCreated: () => void }) {
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
-  const [form, setForm] = useState({ name: "", sku: "", price: "", comparePrice: "", taxRate: "", attributes: "", initialStock: "0" });
+  const [form, setForm] = useState({
+    name: "",
+    sku: "",
+    colour: "",
+    size: "",
+    price: "",
+    comparePrice: "",
+    taxRate: "",
+    initialStock: "0",
+  });
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -274,18 +316,23 @@ function NewVariantForm({ productId, onCreated }: { productId: string; onCreated
     apiGet<Warehouse[]>("/admin/warehouses").then(setWarehouses);
   }, []);
 
+  const tax = taxBreakdown(form.price, form.taxRate);
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
     setError(null);
     try {
+      const attributes: Record<string, string> = {};
+      if (form.colour.trim()) attributes.color = form.colour.trim();
+      if (form.size.trim()) attributes.size = form.size.trim();
       await apiPost(`/admin/products/${productId}/variants`, {
-        name: form.name || undefined,
+        name: form.name || [form.colour, form.size].filter(Boolean).join(" / ") || undefined,
         sku: form.sku,
         price: Number(form.price),
         comparePrice: form.comparePrice ? Number(form.comparePrice) : null,
         taxRate: form.taxRate ? Number(form.taxRate) : null,
-        attributes: parseAttributes(form.attributes),
+        attributes,
         initialStock: Number(form.initialStock),
         warehouseId: warehouses[0]?.id,
       });
@@ -299,14 +346,17 @@ function NewVariantForm({ productId, onCreated }: { productId: string; onCreated
 
   return (
     <form onSubmit={submit} className="mb-4 grid grid-cols-3 gap-3 card p-4">
-      <Field label="Variant name">
+      <Field label="Variant name" hint="optional — defaults to Colour / Size">
         <input placeholder="e.g. Black / M" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
       </Field>
       <Field label="SKU">
         <input required value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} />
       </Field>
-      <Field label="Attributes" hint="color:Black, size:M">
-        <input value={form.attributes} onChange={(e) => setForm({ ...form, attributes: e.target.value })} />
+      <Field label="Colour">
+        <input placeholder="e.g. Black" value={form.colour} onChange={(e) => setForm({ ...form, colour: e.target.value })} />
+      </Field>
+      <Field label="Size">
+        <input placeholder="e.g. M" value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })} />
       </Field>
       <Field label="Price (₹)">
         <input required type="number" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
@@ -316,6 +366,11 @@ function NewVariantForm({ productId, onCreated }: { productId: string; onCreated
       </Field>
       <Field label="Tax rate %" hint="blank = platform default 18%">
         <input type="number" step="0.01" value={form.taxRate} onChange={(e) => setForm({ ...form, taxRate: e.target.value })} />
+      </Field>
+      <Field label="GST amount">
+        <div className="flex h-[38px] items-center rounded-md border border-border bg-chrome px-3 font-mono text-[13px] text-ink">
+          ₹{tax.amount.toFixed(2)} <span className="ml-1.5 text-[11px] text-faint">at {tax.rate}%</span>
+        </div>
       </Field>
       <Field label="Initial stock">
         <input type="number" min={0} value={form.initialStock} onChange={(e) => setForm({ ...form, initialStock: e.target.value })} />
@@ -338,27 +393,40 @@ function VariantRow({ productId, variant, onChange }: { productId: string; varia
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({
     name: variant.name ?? "",
+    colour: variant.attributes.color ?? "",
+    size: variant.attributes.size ?? "",
     price: variant.price,
     comparePrice: variant.comparePrice ?? "",
     taxRate: variant.taxRate ?? "",
-    attributes: attributesToString(variant.attributes),
   });
   const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const tax = taxBreakdown(form.price, form.taxRate);
 
   async function save() {
+    setSaving(true);
     setError(null);
     try {
+      const attributes: Record<string, string> = { ...variant.attributes };
+      if (form.colour.trim()) attributes.color = form.colour.trim();
+      else delete attributes.color;
+      if (form.size.trim()) attributes.size = form.size.trim();
+      else delete attributes.size;
+
       await apiPut(`/admin/products/${productId}/variants/${variant.id}`, {
-        name: form.name || undefined,
+        name: form.name || [form.colour, form.size].filter(Boolean).join(" / ") || undefined,
         price: Number(form.price),
         comparePrice: form.comparePrice ? Number(form.comparePrice) : null,
         taxRate: form.taxRate ? Number(form.taxRate) : null,
-        attributes: parseAttributes(form.attributes),
+        attributes,
       });
       setEditing(false);
       onChange();
     } catch (err) {
       setError(err instanceof ApiClientError ? err.message : "Could not save variant");
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -374,33 +442,55 @@ function VariantRow({ productId, variant, onChange }: { productId: string; varia
 
   if (editing) {
     return (
-      <div className="rule grid grid-cols-6 gap-2 py-2.5">
-        <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="!py-1.5 !text-[12.5px]" />
-        <input value={form.attributes} onChange={(e) => setForm({ ...form, attributes: e.target.value })} className="!py-1.5 !text-[12.5px]" />
-        <input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="!py-1.5 !text-[12.5px]" />
-        <input
-          type="number"
-          value={form.comparePrice}
-          onChange={(e) => setForm({ ...form, comparePrice: e.target.value })}
-          className="!py-1.5 !text-[12.5px]"
-        />
-        <input type="number" value={form.taxRate} onChange={(e) => setForm({ ...form, taxRate: e.target.value })} className="!py-1.5 !text-[12.5px]" />
-        <div className="flex items-center gap-2">
-          <button onClick={save} className="text-[12px] text-accent hover:underline">
-            Save
+      <div className="mb-2 grid grid-cols-3 gap-3 card p-4">
+        <Field label="Variant name" hint="optional — defaults to Colour / Size">
+          <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+        </Field>
+        <Field label="Colour">
+          <input value={form.colour} onChange={(e) => setForm({ ...form, colour: e.target.value })} />
+        </Field>
+        <Field label="Size">
+          <input value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })} />
+        </Field>
+        <Field label="Price (₹)">
+          <input type="number" step="0.01" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
+        </Field>
+        <Field label="Compare-at price (₹)">
+          <input type="number" step="0.01" value={form.comparePrice} onChange={(e) => setForm({ ...form, comparePrice: e.target.value })} />
+        </Field>
+        <Field label="Tax rate %" hint="blank = platform default 18%">
+          <input type="number" step="0.01" value={form.taxRate} onChange={(e) => setForm({ ...form, taxRate: e.target.value })} />
+        </Field>
+        <Field label="GST amount">
+          <div className="flex h-[38px] items-center rounded-md border border-border bg-chrome px-3 font-mono text-[13px] text-ink">
+            ₹{tax.amount.toFixed(2)} <span className="ml-1.5 text-[11px] text-faint">at {tax.rate}%</span>
+          </div>
+        </Field>
+        <div className="col-span-3 flex items-center gap-3">
+          {error ? <p className="text-[12px] text-warn">{error}</p> : null}
+          <button
+            onClick={save}
+            disabled={saving}
+            className="btn-pill flex h-9 items-center justify-center btn-primary px-5 text-[12.5px] font-medium disabled:opacity-50"
+          >
+            {saving ? "Saving…" : "Save"}
           </button>
-          <button onClick={() => setEditing(false)} className="text-[12px] text-muted hover:underline">
+          <button onClick={() => setEditing(false)} className="text-[12.5px] text-muted hover:text-ink">
             Cancel
           </button>
         </div>
-        {error ? <p className="col-span-6 text-[11.5px] text-warn">{error}</p> : null}
       </div>
     );
   }
 
+  const variantAttrs = [variant.attributes.color, variant.attributes.size].filter(Boolean).join(" · ");
+
   return (
     <div className="rule grid grid-cols-6 items-center gap-2 py-2.5 text-[13px] text-ink">
-      <span>{variant.name ?? "—"}</span>
+      <span>
+        {variant.name ?? "—"}
+        {variantAttrs ? <span className="block text-[11px] text-muted">{variantAttrs}</span> : null}
+      </span>
       <span className="font-mono text-[11.5px] text-muted">{variant.sku}</span>
       <span className="font-semibold">{formatMoney(variant.price)}</span>
       <span className="text-faint">{variant.comparePrice ? formatMoney(variant.comparePrice) : "—"}</span>

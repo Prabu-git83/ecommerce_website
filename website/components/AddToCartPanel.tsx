@@ -6,12 +6,22 @@ import { useCartStore } from "@/lib/stores/cart-store";
 import { formatMoney } from "@/lib/format";
 import type { ProductVariant } from "@/lib/types";
 
+const USD_RATE = 83.2;
+
+function estimatedDelivery() {
+  const d = new Date();
+  d.setDate(d.getDate() + 3);
+  return d.toLocaleDateString("en-IN", { weekday: "short", day: "2-digit", month: "short" });
+}
+
 export default function AddToCartPanel({ variants }: { variants: ProductVariant[] }) {
   const [selectedId, setSelectedId] = useState(variants.find((v) => v.isDefault)?.id ?? variants[0]?.id);
   const [adding, setAdding] = useState(false);
   const [added, setAdded] = useState(false);
+  const [pincode, setPincode] = useState("560001");
   const addItem = useCartStore((s) => s.addItem);
   const router = useRouter();
+  const eta = useMemo(() => estimatedDelivery(), []);
 
   const selected = useMemo(() => variants.find((v) => v.id === selectedId) ?? variants[0], [variants, selectedId]);
   const attributeKeys = useMemo(() => {
@@ -58,6 +68,9 @@ export default function AddToCartPanel({ variants }: { variants: ProductVariant[
         ) : null}
         {discountPct ? <span className="status-pill bg-success-soft text-success-text">{discountPct}% OFF</span> : null}
       </div>
+      <div className="mt-1 font-mono text-[11px] text-faint">
+        ${(Number(selected.price) / USD_RATE).toFixed(0)} USD · incl. GST
+      </div>
 
       {attributeKeys.map((key) => (
         <div key={key} className="mt-5">
@@ -95,19 +108,26 @@ export default function AddToCartPanel({ variants }: { variants: ProductVariant[
       ))}
 
       <div className="card mt-5 p-3.5 font-body text-[12px] text-muted">
-        <div className="flex justify-between">
+        <div className="flex items-center justify-between">
+          <span>Deliver to</span>
+          <span className="flex items-center gap-2">
+            <input
+              value={pincode}
+              onChange={(e) => setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+              className="!w-[68px] !py-1 !px-2 text-right text-[12px]"
+              maxLength={6}
+              inputMode="numeric"
+            />
+            <span className="font-medium text-ink">{eta}</span>
+          </span>
+        </div>
+        <div className="mt-1.5 flex justify-between">
           <span>Availability</span>
           {outOfStock ? (
             <span className="font-medium text-warn">Out of stock</span>
           ) : (
-            <span className="font-medium text-success">
-              In stock{selected.lowStock ? ` · only ${selected.qtyAvailable} left` : ""}
-            </span>
+            <span className="font-medium text-success">In stock · {selected.qtyAvailable}</span>
           )}
-        </div>
-        <div className="mt-1.5 flex justify-between">
-          <span>Delivery</span>
-          <span className="font-medium text-ink">3-5 days · free over ₹999</span>
         </div>
         <div className="mt-1.5 flex justify-between">
           <span>Returns</span>

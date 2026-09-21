@@ -2,6 +2,9 @@ import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import * as productsService from "./service";
 import { ok } from "../../../lib/response";
+import { ApiError } from "../../../lib/errors";
+
+const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"]);
 
 const listQuerySchema = z.object({
   status: z.string().optional(),
@@ -82,6 +85,22 @@ export default async function adminProductRoutes(app: FastifyInstance) {
     const image = await productsService.addImage(id, body.url, body.alt);
     reply.status(201);
     return ok(image);
+  });
+
+  app.post("/products/:id/images/upload", async (request, reply) => {
+    const { id } = z.object({ id: z.string().uuid() }).parse(request.params);
+    const created = [];
+    for await (const file of request.files()) {
+      if (!ALLOWED_IMAGE_TYPES.has(file.mimetype)) {
+        throw ApiError.badRequest(`Unsupported image type: ${file.mimetype}`, "unsupported_file_type");
+      }
+      const buffer = await file.toBuffer();
+      const image = await productsService.uploadImage(id, file.filename, file.mimetype, buffer);
+      created.push(image);
+    }
+    if (created.length === 0) throw ApiError.badRequest("No files uploaded", "no_files");
+    reply.status(201);
+    return ok(created);
   });
 
   app.delete("/products/:id/images/:imageId", async (request) => {

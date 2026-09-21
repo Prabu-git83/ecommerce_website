@@ -1,4 +1,4 @@
-import { S3Client, CreateBucketCommand, HeadBucketCommand, PutBucketPolicyCommand } from "@aws-sdk/client-s3";
+import { S3Client, CreateBucketCommand, HeadBucketCommand, PutBucketPolicyCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { env } from "../config/env";
 
 export const s3 = new S3Client({
@@ -37,4 +37,9 @@ export async function ensureBucket() {
 
 export function publicUrlFor(key: string): string {
   return `${env.S3_PUBLIC_URL}/${key}`;
+}
+
+export async function uploadObject(key: string, body: Buffer, contentType: string): Promise<string> {
+  await s3.send(new PutObjectCommand({ Bucket: env.S3_BUCKET, Key: key, Body: body, ContentType: contentType }));
+  return publicUrlFor(key);
 }
