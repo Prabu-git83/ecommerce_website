@@ -40,28 +40,34 @@ export default function Login() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-paper px-5">
       <div className="w-full max-w-[400px]">
-        <div className="eyebrow">Arca Admin</div>
-        <h1 className="mt-2 font-display text-[28px] font-extrabold tracking-tight text-ink">Operations console</h1>
-        <p className="mt-2 text-[13.5px] text-muted">Sign in with your admin account.</p>
+        <div className="mb-5 flex items-center gap-2.5">
+          <span className="block h-[26px] w-[26px] rounded-[6px] bg-accent" />
+          <span className="font-display text-[16px] font-bold text-ink">ARCA Admin</span>
+        </div>
 
-        <form onSubmit={onSubmit} className="rule-strong mt-6 flex flex-col gap-4 pt-6">
-          <Field label="Email">
-            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} autoFocus />
-          </Field>
-          <Field label="Password">
-            <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-          </Field>
-          {error ? <p className="text-[12.5px] text-warn">{error}</p> : null}
-          <button
-            type="submit"
-            disabled={submitting}
-            className="btn-pill mt-2 flex h-11 items-center justify-center bg-ink font-body text-[13px] font-medium text-paper disabled:opacity-50"
-          >
-            {submitting ? "Signing in…" : "Sign in"}
-          </button>
-        </form>
+        <div className="card p-7">
+          <h1 className="font-display text-[20px] font-semibold text-ink">Operations console</h1>
+          <p className="mt-1.5 text-[13px] text-muted">Sign in with your admin account.</p>
 
-        <p className="mt-5 font-mono text-[11px] text-faint">Demo credentials — admin@arca.local / admin123</p>
+          <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-4">
+            <Field label="Email">
+              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} autoFocus />
+            </Field>
+            <Field label="Password">
+              <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+            </Field>
+            {error ? <p className="text-[12.5px] text-warn">{error}</p> : null}
+            <button
+              type="submit"
+              disabled={submitting}
+              className="btn-pill mt-1 flex h-11 items-center justify-center btn-primary font-body text-[13px] font-medium disabled:opacity-50"
+            >
+              {submitting ? "Signing in…" : "Sign in"}
+            </button>
+          </form>
+        </div>
+
+        <p className="mt-5 text-center font-mono text-[11px] text-faint">Demo credentials — admin@arca.local / admin123</p>
       </div>
     </div>
   );

@@ -9,54 +9,65 @@ const OPERATIONS = [
   { to: "/inventory", label: "Inventory" },
 ];
 
+const SUPPORT = [{ to: "/customers", label: "Customers" }];
+
+function initials(name?: string) {
+  if (!name) return "AA";
+  const parts = name.trim().split(/\s+/);
+  return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase() || "AA";
+}
+
+function NavItem({ to, label, end }: { to: string; label: string; end?: boolean }) {
+  return (
+    <NavLink
+      key={to}
+      to={to}
+      end={end}
+      className={({ isActive }) =>
+        `flex items-center gap-2.5 rounded-md px-4 py-2 font-body text-[12.5px] transition-colors ${
+          isActive ? "bg-accent font-medium text-white" : "text-faint hover:text-white"
+        }`
+      }
+    >
+      {label}
+    </NavLink>
+  );
+}
+
 export default function Sidebar() {
   const admin = useAuthStore((s) => s.admin);
   const clear = useAuthStore((s) => s.clear);
 
   return (
-    <aside className="flex h-screen w-[220px] flex-none flex-col border-r border-border-strong bg-sidebar py-5">
-      <div className="px-5 pb-6">
-        <span className="font-display text-[17px] font-extrabold tracking-tight text-ink">
-          ARCA <span className="font-mono text-[11px] font-normal tracking-wider text-faint">ADMIN</span>
-        </span>
+    <aside className="flex h-screen w-[220px] flex-none flex-col bg-ink py-4">
+      <div className="flex items-center gap-2.5 px-4 pb-5">
+        <span className="block h-[22px] w-[22px] rounded-[5px] bg-accent" />
+        <span className="font-display text-[14px] font-bold text-white">ARCA Admin</span>
       </div>
 
-      <div className="eyebrow px-5 pb-2">Operations</div>
-      <nav className="flex flex-col">
+      <div className="px-4 pb-2 font-mono text-[9px] font-medium uppercase tracking-[0.12em] text-sidebar-label">Operations</div>
+      <nav className="flex flex-col gap-0.5 px-2">
         {OPERATIONS.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.end}
-            className={({ isActive }) =>
-              `border-l-2 px-5 py-1.5 font-body text-[13px] ${
-                isActive ? "border-accent font-semibold text-ink" : "border-transparent text-muted hover:text-ink"
-              }`
-            }
-          >
-            {item.label}
-          </NavLink>
+          <NavItem key={item.to} {...item} />
         ))}
       </nav>
 
-      <div className="eyebrow px-5 pb-2 pt-5">Customers</div>
-      <nav className="flex flex-col">
-        <NavLink
-          to="/customers"
-          className={({ isActive }) =>
-            `border-l-2 px-5 py-1.5 font-body text-[13px] ${
-              isActive ? "border-accent font-semibold text-ink" : "border-transparent text-muted hover:text-ink"
-            }`
-          }
-        >
-          Customers
-        </NavLink>
+      <div className="px-4 pb-2 pt-4 font-mono text-[9px] font-medium uppercase tracking-[0.12em] text-sidebar-label">Support</div>
+      <nav className="flex flex-col gap-0.5 px-2">
+        {SUPPORT.map((item) => (
+          <NavItem key={item.to} {...item} />
+        ))}
       </nav>
 
-      <div className="mt-auto border-t border-border-strong px-5 pt-3.5">
-        <div className="font-body text-[12.5px] font-semibold text-ink">{admin?.name}</div>
-        <div className="mt-0.5 font-mono text-[9.5px] uppercase tracking-wider text-faint">{admin?.role}</div>
-        <button onClick={clear} className="mt-2.5 text-[11.5px] text-muted hover:text-ink">
+      <div className="mt-auto flex items-center gap-2.5 border-t border-slate px-4 pt-3.5">
+        <span className="flex h-[26px] w-[26px] flex-none items-center justify-center rounded-md bg-slate font-body text-[11px] font-semibold text-faint">
+          {initials(admin?.name)}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate font-body text-[11.5px] font-medium text-white">{admin?.name}</span>
+          <span className="block font-mono text-[9.5px] uppercase tracking-wider text-sidebar-label">{admin?.role}</span>
+        </span>
+        <button onClick={clear} className="flex-none text-[11px] text-faint hover:text-white">
           Sign out
         </button>
       </div>

@@ -159,7 +159,7 @@ export default function ProductForm() {
             <button
               type="submit"
               disabled={saving}
-              className="btn-pill flex h-10 items-center justify-center bg-ink px-6 font-body text-[13px] font-medium text-paper disabled:opacity-50"
+              className="btn-pill flex h-10 items-center justify-center btn-primary px-6 font-body text-[13px] font-medium disabled:opacity-50"
             >
               {saving ? "Saving…" : isNew ? "Create product" : "Save changes"}
             </button>
@@ -218,7 +218,7 @@ function ImagesSection({ product, onChange }: { product: ProductDetail; onChange
 
   return (
     <div className="rule-strong mt-10 pb-4 pt-2">
-      <div className="font-display text-[18px] font-extrabold tracking-tight text-ink">Images</div>
+      <div className="font-display text-[18px] font-semibold text-ink">Images</div>
       <div className="mt-4 flex flex-wrap gap-3">
         {product.images.map((img) => (
           <div key={img.id} className="group relative h-20 w-20">
@@ -247,7 +247,7 @@ function VariantsSection({ product, onChange }: { product: ProductDetail; onChan
   return (
     <div className="pb-16 pt-2">
       <div className="rule-strong flex items-center justify-between pb-4">
-        <span className="font-display text-[18px] font-extrabold tracking-tight text-ink">Variants</span>
+        <span className="font-display text-[18px] font-semibold text-ink">Variants</span>
         <button onClick={() => setShowForm((v) => !v)} className="text-[12.5px] text-accent hover:underline">
           {showForm ? "Cancel" : "+ Add variant"}
         </button>
@@ -298,7 +298,7 @@ function NewVariantForm({ productId, onCreated }: { productId: string; onCreated
   }
 
   return (
-    <form onSubmit={submit} className="mb-4 grid grid-cols-3 gap-3 rounded-lg border border-border-strong bg-surface p-4">
+    <form onSubmit={submit} className="mb-4 grid grid-cols-3 gap-3 card p-4">
       <Field label="Variant name">
         <input placeholder="e.g. Black / M" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
       </Field>
@@ -325,7 +325,7 @@ function NewVariantForm({ productId, onCreated }: { productId: string; onCreated
         <button
           type="submit"
           disabled={saving}
-          className="btn-pill flex h-9 items-center justify-center bg-ink px-5 text-[12.5px] font-medium text-paper disabled:opacity-50"
+          className="btn-pill flex h-9 items-center justify-center btn-primary px-5 text-[12.5px] font-medium disabled:opacity-50"
         >
           {saving ? "Adding…" : "Add variant"}
         </button>
@@ -404,7 +404,7 @@ function VariantRow({ productId, variant, onChange }: { productId: string; varia
       <span className="font-mono text-[11.5px] text-muted">{variant.sku}</span>
       <span className="font-semibold">{formatMoney(variant.price)}</span>
       <span className="text-faint">{variant.comparePrice ? formatMoney(variant.comparePrice) : "—"}</span>
-      <span className={`font-mono text-[12px] ${(variant.inventory?.qtyAvailable ?? 0) <= (variant.inventory?.lowStockThreshold ?? 5) ? "text-warn" : "text-accent"}`}>
+      <span className={`font-mono text-[12px] ${(variant.inventory?.qtyAvailable ?? 0) <= (variant.inventory?.lowStockThreshold ?? 5) ? "text-warning font-semibold" : "text-success"}`}>
         {variant.inventory?.qtyAvailable ?? 0} in stock
       </span>
       <div className="flex items-center gap-3">

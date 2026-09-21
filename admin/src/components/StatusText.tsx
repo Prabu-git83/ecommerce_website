@@ -1,28 +1,30 @@
-const COLOR_MAP: Record<string, string> = {
+const STYLES: Record<string, string> = {
   // order status
-  pending: "text-warn",
-  confirmed: "text-accent",
-  processing: "text-muted",
-  shipped: "text-info",
-  delivered: "text-accent",
-  cancelled: "text-warn",
-  return_requested: "text-warn",
-  returned: "text-muted",
-  // payment / stock / product status
-  paid: "text-accent",
-  unpaid: "text-warn",
-  refunded: "text-muted",
-  partially_refunded: "text-warn",
-  active: "text-accent",
-  draft: "text-faint",
-  archived: "text-faint",
-  suspended: "text-warn",
-  low_stock: "text-warn",
-  out_of_stock: "text-warn",
-  in_stock: "text-accent",
+  pending: "bg-warning-soft text-warning-text",
+  confirmed: "bg-accent-soft text-accent-dark",
+  processing: "bg-chrome text-slate",
+  shipped: "bg-accent-soft text-accent-dark",
+  delivered: "bg-success-soft text-success-text",
+  cancelled: "bg-warn-soft text-warn-text",
+  return_requested: "bg-warning-soft text-warning-text",
+  returned: "bg-chrome text-slate",
+  // payment status
+  paid: "bg-success-soft text-success-text",
+  unpaid: "bg-warning-soft text-warning-text",
+  refunded: "bg-chrome text-slate",
+  partially_refunded: "bg-warning-soft text-warning-text",
+  // product / customer status
+  active: "bg-success-soft text-success-text",
+  draft: "bg-chrome text-slate",
+  archived: "bg-chrome text-slate",
+  suspended: "bg-warn-soft text-warn-text",
+  // stock status
+  low_stock: "bg-warning-soft text-warning-text",
+  out_of_stock: "bg-warn-soft text-warn-text",
+  in_stock: "bg-success-soft text-success-text",
 };
 
 export default function StatusText({ status, label }: { status: string; label?: string }) {
-  const color = COLOR_MAP[status] ?? "text-muted";
-  return <span className={`font-semibold text-[12px] capitalize ${color}`}>{(label ?? status).replace(/_/g, " ")}</span>;
+  const style = STYLES[status] ?? "bg-chrome text-slate";
+  return <span className={`status-pill ${style}`}>{(label ?? status).replace(/_/g, " ")}</span>;
 }

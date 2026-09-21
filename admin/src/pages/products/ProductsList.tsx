@@ -37,7 +37,7 @@ export default function ProductsList() {
         actions={
           <>
             <input placeholder="Search…" value={q} onChange={(e) => setQ(e.target.value)} className="!w-48 !py-1.5" />
-            <Link to="/products/new" className="btn-pill bg-ink px-5 py-2 font-medium text-paper">
+            <Link to="/products/new" className="btn-pill btn-primary px-5 py-2 font-medium">
               New product
             </Link>
           </>
@@ -45,12 +45,12 @@ export default function ProductsList() {
       />
 
       <div className="flex">
-        <div className="w-[180px] flex-none border-r border-border px-5 pt-5">
+        <div className="w-[180px] flex-none border-r border-border bg-surface px-5 pt-5">
           <div className="eyebrow mb-3">Categories</div>
           <div className="flex flex-col gap-2">
             <button
               onClick={() => setActiveCategory(null)}
-              className={`text-left text-[12.5px] ${!activeCategory ? "font-semibold text-ink" : "text-muted hover:text-ink"}`}
+              className={`text-left text-[12.5px] ${!activeCategory ? "font-semibold text-accent" : "text-muted hover:text-ink"}`}
             >
               All
             </button>
@@ -59,7 +59,7 @@ export default function ProductsList() {
                 <button
                   onClick={() => setActiveCategory(c.slug)}
                   className={`flex w-full justify-between text-left text-[12.5px] ${
-                    activeCategory === c.slug ? "font-semibold text-ink" : "text-muted hover:text-ink"
+                    activeCategory === c.slug ? "font-semibold text-accent" : "text-muted hover:text-ink"
                   }`}
                 >
                   <span>{c.name}</span>
@@ -70,7 +70,7 @@ export default function ProductsList() {
                     key={child.id}
                     onClick={() => setActiveCategory(child.slug)}
                     className={`mt-2 flex w-full justify-between pl-3 text-left text-[12.5px] ${
-                      activeCategory === child.slug ? "font-semibold text-ink" : "text-muted hover:text-ink"
+                      activeCategory === child.slug ? "font-semibold text-accent" : "text-muted hover:text-ink"
                     }`}
                   >
                     <span>{child.name}</span>
@@ -83,41 +83,46 @@ export default function ProductsList() {
         </div>
 
         <div className="flex-1 px-8 pt-5">
-          <div className="grid grid-cols-[minmax(0,1fr)_110px_88px_64px_102px_50px] gap-3 rule pb-2 font-mono text-[9.5px] uppercase tracking-wider text-faint">
-            <span>Product</span>
-            <span>Category</span>
-            <span>Price</span>
-            <span>Stock</span>
-            <span>Status</span>
-            <span></span>
+          <div className="table-card">
+            <div className="table-head grid grid-cols-[minmax(0,1fr)_110px_88px_64px_102px_50px] gap-3 px-4 py-2.5">
+              <span>Product</span>
+              <span>Category</span>
+              <span>Price</span>
+              <span>Stock</span>
+              <span>Status</span>
+              <span></span>
+            </div>
+            {products === null ? (
+              <p className="px-4 py-4 text-[13px] text-muted">Loading…</p>
+            ) : products.length === 0 ? (
+              <p className="px-4 py-4 text-[13px] text-muted">No products found.</p>
+            ) : (
+              products.map((p) => {
+                const stock = stockStatus(p);
+                return (
+                  <div
+                    key={p.id}
+                    className="grid grid-cols-[minmax(0,1fr)_110px_88px_64px_102px_50px] items-center gap-3 border-b border-chrome px-4 py-2.5 last:border-b-0"
+                  >
+                    <span className="flex min-w-0 items-center gap-2.5">
+                      <span
+                        className="stripe-placeholder h-8 w-8 flex-none rounded-md bg-cover bg-center"
+                        style={p.image ? { backgroundImage: `url(${p.image})` } : undefined}
+                      />
+                      <span className="truncate text-[13px] text-ink">{p.name}</span>
+                    </span>
+                    <span className="truncate text-[12px] text-muted">{p.category?.name ?? "—"}</span>
+                    <span className="text-[13px] font-semibold text-ink">{p.price !== null ? formatMoney(p.price) : "—"}</span>
+                    <span className={`font-mono text-[12px] ${p.totalStock <= 5 ? "text-warning" : "text-ink"}`}>{p.totalStock}</span>
+                    <StatusText status={stock.status} label={stock.label} />
+                    <Link to={`/products/${p.id}`} className="font-medium text-[12px] text-accent hover:underline">
+                      Edit
+                    </Link>
+                  </div>
+                );
+              })
+            )}
           </div>
-          {products === null ? (
-            <p className="mt-4 text-[13px] text-muted">Loading…</p>
-          ) : products.length === 0 ? (
-            <p className="mt-4 text-[13px] text-muted">No products found.</p>
-          ) : (
-            products.map((p) => {
-              const stock = stockStatus(p);
-              return (
-                <div key={p.id} className="rule grid grid-cols-[minmax(0,1fr)_110px_88px_64px_102px_50px] items-center gap-3 py-2.5">
-                  <span className="flex min-w-0 items-center gap-2.5">
-                    <span
-                      className="stripe-placeholder h-8 w-8 flex-none rounded-sm bg-cover bg-center"
-                      style={p.image ? { backgroundImage: `url(${p.image})` } : undefined}
-                    />
-                    <span className="truncate text-[13px] text-ink">{p.name}</span>
-                  </span>
-                  <span className="truncate text-[12px] text-muted">{p.category?.name ?? "—"}</span>
-                  <span className="text-[13px] font-semibold text-ink">{p.price !== null ? formatMoney(p.price) : "—"}</span>
-                  <span className={`font-mono text-[12px] ${p.totalStock <= 5 ? "text-warn" : "text-accent"}`}>{p.totalStock}</span>
-                  <StatusText status={stock.status} label={stock.label} />
-                  <Link to={`/products/${p.id}`} className="text-[12px] text-accent hover:underline">
-                    Edit
-                  </Link>
-                </div>
-              );
-            })
-          )}
         </div>
       </div>
     </div>

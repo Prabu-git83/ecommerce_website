@@ -11,9 +11,9 @@ export default function AdminLayout() {
   if (!accessToken) return <Navigate to="/login" state={{ next: location.pathname }} replace />;
 
   return (
-    <div className="flex bg-paper">
+    <div className="flex h-screen bg-paper">
       <Sidebar />
-      <main className="min-h-screen flex-1 overflow-x-hidden">
+      <main className="h-screen flex-1 overflow-y-auto overflow-x-hidden">
         <Outlet />
       </main>
     </div>

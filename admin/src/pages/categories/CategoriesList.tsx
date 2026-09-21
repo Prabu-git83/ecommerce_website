@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import PageHeader from "@/components/PageHeader";
+import StatusText from "@/components/StatusText";
 import Field from "@/components/Field";
 import { apiGet, apiPost, apiPut, apiDelete, ApiClientError } from "@/lib/api";
 import type { Category } from "@/lib/types";
@@ -27,20 +28,20 @@ export default function CategoriesList() {
   function renderRows(nodes: Category[], depth: number): React.ReactNode {
     return nodes.map((c) => (
       <div key={c.id}>
-        <div className="rule grid grid-cols-[1fr_100px_80px_90px_110px] items-center gap-3 py-2.5">
+        <div className="grid grid-cols-[1fr_100px_80px_90px_110px] items-center gap-3 border-b border-chrome px-4 py-2.5 last:border-b-0">
           <span className="text-[13px] text-ink" style={{ paddingLeft: depth * 20 }}>
             {depth > 0 ? "— " : ""}
             {c.name}
           </span>
           <span className="font-mono text-[11px] text-muted">{c.productCount} items</span>
           <span className="font-mono text-[11.5px] text-muted">order {c.sortOrder}</span>
-          <span className={`text-[12px] font-semibold ${c.isActive ? "text-accent" : "text-faint"}`}>{c.isActive ? "Active" : "Inactive"}</span>
+          <StatusText status={c.isActive ? "active" : "archived"} label={c.isActive ? "Active" : "Inactive"} />
           <div className="flex gap-3">
-            <button onClick={() => setEditing(c)} className="text-[12px] text-accent hover:underline">
+            <button onClick={() => setEditing(c)} className="text-[12px] font-medium text-accent hover:underline">
               Edit
             </button>
             {depth === 0 ? (
-              <button onClick={() => setShowForm({ parentId: c.id })} className="text-[12px] text-accent hover:underline">
+              <button onClick={() => setShowForm({ parentId: c.id })} className="text-[12px] font-medium text-accent hover:underline">
                 + Sub
               </button>
             ) : null}
@@ -61,7 +62,7 @@ export default function CategoriesList() {
       <PageHeader
         title="Categories"
         actions={
-          <button onClick={() => setShowForm({ parentId: null })} className="btn-pill bg-ink px-5 py-2 font-medium text-paper">
+          <button onClick={() => setShowForm({ parentId: null })} className="btn-pill btn-primary px-5 py-2 font-medium">
             New category
           </button>
         }
@@ -91,14 +92,16 @@ export default function CategoriesList() {
           />
         ) : null}
 
-        <div className="mt-4 grid grid-cols-[1fr_100px_80px_90px_110px] gap-3 rule pb-2 font-mono text-[9.5px] uppercase tracking-wider text-faint">
-          <span>Category</span>
-          <span>Products</span>
-          <span>Sort</span>
-          <span>Status</span>
-          <span></span>
+        <div className="table-card">
+          <div className="table-head grid grid-cols-[1fr_100px_80px_90px_110px] gap-3 px-4 py-2.5">
+            <span>Category</span>
+            <span>Products</span>
+            <span>Sort</span>
+            <span>Status</span>
+            <span></span>
+          </div>
+          {categories === null ? <p className="px-4 py-4 text-[13px] text-muted">Loading…</p> : renderRows(categories, 0)}
         </div>
-        {categories === null ? <p className="mt-4 text-[13px] text-muted">Loading…</p> : renderRows(categories, 0)}
       </div>
     </div>
   );
@@ -144,7 +147,7 @@ function CategoryForm({
   }
 
   return (
-    <form onSubmit={submit} className="mb-6 grid grid-cols-2 gap-3 rounded-lg border border-border-strong bg-surface p-4">
+    <form onSubmit={submit} className="mb-6 grid grid-cols-2 gap-3 card p-4">
       <div className="col-span-2 font-display text-[15px] font-bold text-ink">
         {category ? `Edit ${category.name}` : parentId ? "New subcategory" : "New category"}
       </div>
@@ -173,7 +176,7 @@ function CategoryForm({
         <button
           type="submit"
           disabled={saving}
-          className="btn-pill flex h-9 items-center justify-center bg-ink px-5 text-[12.5px] font-medium text-paper disabled:opacity-50"
+          className="btn-pill flex h-9 items-center justify-center btn-primary px-5 text-[12.5px] font-medium disabled:opacity-50"
         >
           {saving ? "Saving…" : "Save"}
         </button>

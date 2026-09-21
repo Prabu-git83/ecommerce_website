@@ -87,7 +87,7 @@ export default function OrderDetail() {
         <div className="flex-[1.6]">
           <div className="flex items-center gap-4">
             <StatusText status={order.status} />
-            <span className={`text-[12px] font-semibold ${order.paymentStatus === "paid" ? "text-accent" : "text-warn"}`}>
+            <span className={`text-[12px] font-semibold ${order.paymentStatus === "paid" ? "text-success" : "text-warn"}`}>
               {order.paymentStatus} {order.paymentMethod ? `· ${order.paymentMethod}` : ""}
             </span>
           </div>
@@ -133,7 +133,7 @@ export default function OrderDetail() {
           ) : null}
 
           {options.length > 0 ? (
-            <form onSubmit={submitStatus} className="mt-8 flex flex-wrap items-end gap-3 rounded-lg border border-border-strong bg-surface p-4">
+            <form onSubmit={submitStatus} className="mt-8 flex flex-wrap items-end gap-3 card p-4">
               <Field label="Update status">
                 <select value={nextStatus} onChange={(e) => setNextStatus(e.target.value)} className="!w-44">
                   <option value="">Select…</option>
@@ -150,7 +150,7 @@ export default function OrderDetail() {
               <button
                 type="submit"
                 disabled={!nextStatus || savingStatus}
-                className="btn-pill flex h-9 items-center justify-center bg-ink px-5 text-[12.5px] font-medium text-paper disabled:opacity-50"
+                className="btn-pill flex h-9 items-center justify-center btn-primary px-5 text-[12.5px] font-medium disabled:opacity-50"
               >
                 {savingStatus ? "Updating…" : "Update"}
               </button>
@@ -159,7 +159,7 @@ export default function OrderDetail() {
           ) : null}
 
           {order.paymentStatus === "paid" && capturedPayment ? (
-            <form onSubmit={submitRefund} className="mt-4 flex flex-wrap items-end gap-3 rounded-lg border border-border-strong bg-surface p-4">
+            <form onSubmit={submitRefund} className="mt-4 flex flex-wrap items-end gap-3 card p-4">
               <Field label="Refund amount (₹)">
                 <input type="number" step="0.01" value={refundAmount} onChange={(e) => setRefundAmount(e.target.value)} className="!w-32" />
               </Field>

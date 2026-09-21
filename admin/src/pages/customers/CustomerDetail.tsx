@@ -69,7 +69,7 @@ export default function CustomerDetail() {
           </div>
 
           <div className="mt-6">
-            <div className="rule-strong pb-2 font-display text-[16px] font-extrabold tracking-tight text-ink">Order history</div>
+            <div className="rule-strong pb-2 font-display text-[16px] font-semibold text-ink">Order history</div>
             {customer.orders.length === 0 ? (
               <p className="mt-3 text-[13px] text-muted">No orders yet.</p>
             ) : (
@@ -85,7 +85,7 @@ export default function CustomerDetail() {
           </div>
 
           <div className="mt-8">
-            <div className="rule-strong pb-2 font-display text-[16px] font-extrabold tracking-tight text-ink">Support notes</div>
+            <div className="rule-strong pb-2 font-display text-[16px] font-semibold text-ink">Support notes</div>
             <p className="mt-2 text-[12px] text-muted">
               Lightweight log of support interactions — no full ticketing system in this phase.
             </p>
