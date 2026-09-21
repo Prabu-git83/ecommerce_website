@@ -55,6 +55,13 @@ npm run db:seed
 
 ## Running the app
 
+**Windows: double-click `start-dev.bat`** — it starts Docker Desktop if it isn't
+running, waits for it, brings up the four containers, then opens the backend, website
+and admin dev servers each in their own terminal window (skipping anything already
+running). Safe to re-run any time.
+
+Or from a terminal:
+
 ```bash
 # Runs the backend (http://localhost:4000), website (http://localhost:3000)
 # and admin portal (http://localhost:5173) together
