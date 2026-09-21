@@ -66,6 +66,7 @@ export async function listProducts(params: { status?: string; category?: string;
         id: p.id,
         name: p.name,
         slug: p.slug,
+        brand: p.brand,
         status: p.status,
         isFeatured: p.isFeatured,
         image: image?.url ?? null,
@@ -105,6 +106,7 @@ export async function getProduct(id: string) {
 
 export type ProductInput = {
   name: string;
+  brand?: string;
   categoryId: string | null;
   description?: string;
   shortDesc?: string;
@@ -121,6 +123,7 @@ export async function createProduct(input: ProductInput) {
     .values({
       name: input.name,
       slug,
+      brand: input.brand,
       categoryId: input.categoryId,
       description: input.description,
       shortDesc: input.shortDesc,

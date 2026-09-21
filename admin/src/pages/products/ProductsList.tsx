@@ -84,8 +84,9 @@ export default function ProductsList() {
 
         <div className="flex-1 px-8 pt-5">
           <div className="table-card">
-            <div className="table-head grid grid-cols-[minmax(0,1fr)_110px_88px_64px_102px_50px] gap-3 px-4 py-2.5">
+            <div className="table-head grid grid-cols-[minmax(0,1fr)_100px_110px_88px_64px_102px_50px] gap-3 px-4 py-2.5">
               <span>Product</span>
+              <span>Brand</span>
               <span>Category</span>
               <span>Price</span>
               <span>Stock</span>
@@ -102,7 +103,7 @@ export default function ProductsList() {
                 return (
                   <div
                     key={p.id}
-                    className="grid grid-cols-[minmax(0,1fr)_110px_88px_64px_102px_50px] items-center gap-3 border-b border-chrome px-4 py-2.5 last:border-b-0"
+                    className="grid grid-cols-[minmax(0,1fr)_100px_110px_88px_64px_102px_50px] items-center gap-3 border-b border-chrome px-4 py-2.5 last:border-b-0"
                   >
                     <span className="flex min-w-0 items-center gap-2.5">
                       <span
@@ -111,6 +112,7 @@ export default function ProductsList() {
                       />
                       <span className="truncate text-[13px] text-ink">{p.name}</span>
                     </span>
+                    <span className="truncate text-[12px] text-muted">{p.brand ?? "—"}</span>
                     <span className="truncate text-[12px] text-muted">{p.category?.name ?? "—"}</span>
                     <span className="text-[13px] font-semibold text-ink">{p.price !== null ? formatMoney(p.price) : "—"}</span>
                     <span className={`font-mono text-[12px] ${p.totalStock <= 5 ? "text-warning" : "text-ink"}`}>{p.totalStock}</span>

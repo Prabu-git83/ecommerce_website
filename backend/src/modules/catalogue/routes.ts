@@ -8,10 +8,17 @@ const listQuerySchema = z.object({
   category: z.string().optional(),
   minPrice: z.coerce.number().optional(),
   maxPrice: z.coerce.number().optional(),
+  brand: z.union([z.string(), z.array(z.string())]).optional(),
+  availability: z.enum(["in_stock", "out_of_stock"]).optional(),
   sort: z.enum(["price_asc", "price_desc", "newest"]).optional(),
   cursor: z.string().optional(),
   limit: z.coerce.number().optional(),
 });
+
+function toBrandList(brand: string | string[] | undefined): string[] | undefined {
+  if (!brand) return undefined;
+  return Array.isArray(brand) ? brand : [brand];
+}
 
 export default async function catalogueRoutes(app: FastifyInstance) {
   app.get("/categories", async () => {
@@ -44,17 +51,28 @@ export default async function catalogueRoutes(app: FastifyInstance) {
       categorySlug: query.category,
       minPrice: query.minPrice,
       maxPrice: query.maxPrice,
+      brands: toBrandList(query.brand),
+      availability: query.availability,
       sort: query.sort,
       cursor: query.cursor,
       limit: query.limit,
     });
-    return ok(result.items, { nextCursor: result.nextCursor, category: result.category });
+    return ok(result.items, { nextCursor: result.nextCursor, category: result.category, brands: result.brands });
   });
 
   app.get("/categories/:slug/products", async (request) => {
     const { slug } = z.object({ slug: z.string() }).parse(request.params);
     const query = listQuerySchema.parse(request.query);
-    const result = await catalogueService.listProducts({ ...query, categorySlug: slug });
-    return ok(result.items, { nextCursor: result.nextCursor, category: result.category });
+    const result = await catalogueService.listProducts({
+      categorySlug: slug,
+      minPrice: query.minPrice,
+      maxPrice: query.maxPrice,
+      brands: toBrandList(query.brand),
+      availability: query.availability,
+      sort: query.sort,
+      cursor: query.cursor,
+      limit: query.limit,
+    });
+    return ok(result.items, { nextCursor: result.nextCursor, category: result.category, brands: result.brands });
   });
 }

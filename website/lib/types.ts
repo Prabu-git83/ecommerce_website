@@ -14,11 +14,13 @@ export type ProductSummary = {
   id: string;
   name: string;
   slug: string;
+  brand: string | null;
   shortDesc: string | null;
   image: string | null;
   price: Money | null;
   comparePrice: Money | null;
   isFeatured: boolean;
+  inStock: boolean;
 };
 
 export type ProductVariant = {

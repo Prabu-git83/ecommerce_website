@@ -29,15 +29,24 @@ async function attachImagesAndPriceRange(productRows: (typeof products.$inferSel
       const variants = await db.query.productVariants.findMany({ where: eq(productVariants.productId, p.id) });
       const prices = variants.map((v) => Number(v.price));
       const comparePrices = variants.map((v) => (v.comparePrice ? Number(v.comparePrice) : null)).filter(Boolean) as number[];
+
+      const variantIds = variants.map((v) => v.id);
+      const inventoryRows = variantIds.length
+        ? await db.select().from(inventory).where(inArray(inventory.variantId, variantIds))
+        : [];
+      const inStock = inventoryRows.some((i) => (i.qtyAvailable ?? 0) > 0);
+
       return {
         id: p.id,
         name: p.name,
         slug: p.slug,
+        brand: p.brand,
         shortDesc: p.shortDesc,
         image: image?.url ?? null,
         price: prices.length ? Math.min(...prices) : null,
         comparePrice: comparePrices.length ? Math.max(...comparePrices) : null,
         isFeatured: p.isFeatured,
+        inStock,
       };
     })
   );
@@ -47,6 +56,8 @@ export async function listProducts(params: {
   categorySlug?: string;
   minPrice?: number;
   maxPrice?: number;
+  brands?: string[];
+  availability?: "in_stock" | "out_of_stock";
   sort?: "price_asc" | "price_desc" | "newest";
   cursor?: string;
   limit?: number;
@@ -54,15 +65,30 @@ export async function listProducts(params: {
   const limit = Math.min(params.limit ?? 24, 60);
   const conditions = [eq(products.status, "active")];
 
+  let categoryIds: string[] | null = null;
   if (params.categorySlug) {
     const category = await db.query.categories.findFirst({ where: eq(categories.slug, params.categorySlug) });
-    if (!category) return { items: [], nextCursor: null, category: null };
+    if (!category) return { items: [], nextCursor: null, category: null, brands: [] };
     // A parent category page also shows products filed under its children
     // (e.g. "Electronics" includes items filed under "Audio"/"Wearables").
     const children = await db.query.categories.findMany({ where: eq(categories.parentId, category.id) });
-    const categoryIds = [category.id, ...children.map((c) => c.id)];
+    categoryIds = [category.id, ...children.map((c) => c.id)];
     conditions.push(inArray(products.categoryId, categoryIds));
   }
+
+  if (params.brands && params.brands.length > 0) {
+    conditions.push(inArray(products.brand, params.brands));
+  }
+
+  // Brand facets are scoped to category but NOT to the brand/availability filters
+  // themselves, so a checked box doesn't make its own sibling options disappear.
+  const facetConditions = [eq(products.status, "active")];
+  if (categoryIds) facetConditions.push(inArray(products.categoryId, categoryIds));
+  const facetRows = await db.selectDistinct({ brand: products.brand }).from(products).where(and(...facetConditions));
+  const brands = facetRows
+    .map((r) => r.brand)
+    .filter((b): b is string => Boolean(b))
+    .sort((a, b) => a.localeCompare(b));
 
   const rows = await db
     .select()
@@ -77,6 +103,8 @@ export async function listProducts(params: {
 
   if (params.minPrice !== undefined) items = items.filter((i) => (i.price ?? 0) >= params.minPrice!);
   if (params.maxPrice !== undefined) items = items.filter((i) => (i.price ?? 0) <= params.maxPrice!);
+  if (params.availability === "in_stock") items = items.filter((i) => i.inStock);
+  if (params.availability === "out_of_stock") items = items.filter((i) => !i.inStock);
   if (params.sort === "price_asc") items.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
   if (params.sort === "price_desc") items.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
 
@@ -84,7 +112,7 @@ export async function listProducts(params: {
     ? await db.query.categories.findFirst({ where: eq(categories.slug, params.categorySlug) })
     : null;
 
-  return { items, nextCursor: hasMore ? pageRows[pageRows.length - 1].id : null, category };
+  return { items, nextCursor: hasMore ? pageRows[pageRows.length - 1].id : null, category, brands };
 }
 
 export async function getFeaturedProducts(limit = 8) {

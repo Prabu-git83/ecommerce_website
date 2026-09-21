@@ -23,6 +23,7 @@ export default function ProductForm() {
   const [product, setProduct] = useState<ProductDetail | null>(null);
   const [form, setForm] = useState({
     name: "",
+    brand: "",
     categoryId: "",
     shortDesc: "",
     description: "",
@@ -46,6 +47,7 @@ export default function ProductForm() {
       setProduct(p);
       setForm({
         name: p.name,
+        brand: p.brand ?? "",
         categoryId: p.categoryId ?? "",
         shortDesc: p.shortDesc ?? "",
         description: p.description ?? "",
@@ -68,7 +70,7 @@ export default function ProductForm() {
     setSaving(true);
     setError(null);
     try {
-      const payload = { ...form, categoryId: form.categoryId || null };
+      const payload = { ...form, brand: form.brand.trim() || undefined, categoryId: form.categoryId || null };
       if (isNew) {
         const created = await apiPost<ProductDetail>("/admin/products", payload);
         navigate(`/products/${created.id}`, { replace: true });
@@ -100,6 +102,9 @@ export default function ProductForm() {
           </Field>
 
           <div className="grid grid-cols-2 gap-3">
+            <Field label="Brand" hint="shown in the storefront brand filter">
+              <input placeholder="e.g. Sonik" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} />
+            </Field>
             <Field label="Category">
               <select value={form.categoryId} onChange={(e) => setForm({ ...form, categoryId: e.target.value })}>
                 <option value="">— None —</option>
@@ -111,14 +116,15 @@ export default function ProductForm() {
                 ))}
               </select>
             </Field>
-            <Field label="Status">
-              <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>
-                <option value="draft">Draft</option>
-                <option value="active">Active</option>
-                <option value="archived">Archived</option>
-              </select>
-            </Field>
           </div>
+
+          <Field label="Status">
+            <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="!w-48">
+              <option value="draft">Draft</option>
+              <option value="active">Active</option>
+              <option value="archived">Archived</option>
+            </select>
+          </Field>
 
           <Field label="Short description">
             <input value={form.shortDesc} onChange={(e) => setForm({ ...form, shortDesc: e.target.value })} maxLength={500} />

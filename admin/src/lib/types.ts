@@ -15,6 +15,7 @@ export type ProductListItem = {
   id: string;
   name: string;
   slug: string;
+  brand: string | null;
   status: string;
   isFeatured: boolean;
   image: string | null;
@@ -45,6 +46,7 @@ export type ProductDetail = {
   id: string;
   name: string;
   slug: string;
+  brand: string | null;
   description: string | null;
   shortDesc: string | null;
   status: string;

@@ -5,7 +5,7 @@ export default async function CategoryPage({
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<Record<string, string | undefined>>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const [resolvedParams, resolvedSearchParams] = await Promise.all([params, searchParams]);
   return <ProductListing categorySlug={resolvedParams.slug} searchParams={resolvedSearchParams} />;

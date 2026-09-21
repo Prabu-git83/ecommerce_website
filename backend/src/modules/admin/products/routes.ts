@@ -15,6 +15,7 @@ const listQuerySchema = z.object({
 
 const productInputSchema = z.object({
   name: z.string().min(1).max(300),
+  brand: z.string().max(150).optional(),
   categoryId: z.string().uuid().nullable().optional(),
   description: z.string().max(5000).optional(),
   shortDesc: z.string().max(500).optional(),

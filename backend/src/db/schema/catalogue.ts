@@ -17,6 +17,7 @@ export const products = pgTable("products", {
   categoryId: uuid("category_id").references(() => categories.id),
   name: varchar("name", { length: 300 }).notNull(),
   slug: varchar("slug", { length: 300 }).notNull().unique(),
+  brand: varchar("brand", { length: 150 }),
   description: text("description"),
   shortDesc: varchar("short_desc", { length: 500 }),
   status: varchar("status", { length: 20 }).notNull().default("draft"),

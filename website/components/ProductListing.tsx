@@ -1,7 +1,7 @@
 import Link from "next/link";
 import ProductCard from "./ProductCard";
 import SortSelect from "./SortSelect";
-import PriceFilter from "./PriceFilter";
+import ProductFilters from "./ProductFilters";
 import { apiGetWithMeta } from "@/lib/api";
 import type { Category, ProductSummary } from "@/lib/types";
 
@@ -10,25 +10,30 @@ export default async function ProductListing({
   searchParams,
 }: {
   categorySlug?: string;
-  searchParams: Record<string, string | undefined>;
+  searchParams: Record<string, string | string[] | undefined>;
 }) {
   const params = new URLSearchParams();
   if (categorySlug) params.set("category", categorySlug);
-  if (searchParams.sort) params.set("sort", searchParams.sort);
-  if (searchParams.minPrice) params.set("minPrice", searchParams.minPrice);
-  if (searchParams.maxPrice) params.set("maxPrice", searchParams.maxPrice);
+  if (searchParams.sort) params.set("sort", searchParams.sort as string);
+  if (searchParams.minPrice) params.set("minPrice", searchParams.minPrice as string);
+  if (searchParams.maxPrice) params.set("maxPrice", searchParams.maxPrice as string);
+  if (searchParams.availability) params.set("availability", searchParams.availability as string);
+  const brandFilter = searchParams.brand ? (Array.isArray(searchParams.brand) ? searchParams.brand : [searchParams.brand]) : [];
+  brandFilter.forEach((b) => params.append("brand", b));
 
   const path = searchParams.q
-    ? `/products/search?q=${encodeURIComponent(searchParams.q)}`
+    ? `/products/search?q=${encodeURIComponent(searchParams.q as string)}`
     : `/products?${params.toString()}`;
 
   const { data: items, meta } = await apiGetWithMeta<ProductSummary[]>(path, 30);
   const category = (meta?.category as Category | null | undefined) ?? null;
+  const brands = (meta?.brands as string[] | undefined) ?? [];
 
   const heading = searchParams.q ? `Results for "${searchParams.q}"` : category?.name ?? "All products";
   const breadcrumb = searchParams.q ? "SEARCH" : category ? `HOME / ${category.slug.toUpperCase().replace(/-/g, " / ")}` : "HOME / SHOP";
 
-  const filterCount = [searchParams.minPrice, searchParams.maxPrice].filter(Boolean).length;
+  const filterCount =
+    [searchParams.minPrice, searchParams.maxPrice, searchParams.availability].filter(Boolean).length + brandFilter.length;
 
   return (
     <div className="mx-auto max-w-content px-5 py-6 sm:px-10">
@@ -37,7 +42,7 @@ export default async function ProductListing({
       <div className="mt-6 flex gap-8">
         {!searchParams.q ? (
           <aside className="hidden w-[200px] flex-none lg:block">
-            <PriceFilter />
+            <ProductFilters brands={brands} />
           </aside>
         ) : null}
 
@@ -65,7 +70,7 @@ export default async function ProductListing({
           ) : (
             <div className="mt-10 text-sm text-muted">
               No products found.{" "}
-              <Link href="/products" className="text-accent hover:underline">
+              <Link href={categorySlug ? `/category/${categorySlug}` : "/products"} className="text-accent hover:underline">
                 Clear filters
               </Link>
             </div>
