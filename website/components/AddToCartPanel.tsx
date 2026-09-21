@@ -23,6 +23,10 @@ export default function AddToCartPanel({ variants }: { variants: ProductVariant[
   if (!selected) return null;
 
   const outOfStock = selected.qtyAvailable <= 0;
+  const discountPct =
+    selected.comparePrice && Number(selected.comparePrice) > Number(selected.price)
+      ? Math.round(((Number(selected.comparePrice) - Number(selected.price)) / Number(selected.comparePrice)) * 100)
+      : null;
 
   async function handleAdd() {
     setAdding(true);
@@ -35,19 +39,30 @@ export default function AddToCartPanel({ variants }: { variants: ProductVariant[
     }
   }
 
+  async function handleBuyNow() {
+    setAdding(true);
+    try {
+      await addItem(selected.id, 1);
+      router.push("/cart");
+    } finally {
+      setAdding(false);
+    }
+  }
+
   return (
     <div>
       <div className="flex items-baseline gap-3">
-        <span className="font-body text-[22px] font-semibold text-ink">{formatMoney(selected.price)}</span>
+        <span className="font-body text-[24px] font-bold text-ink">{formatMoney(selected.price)}</span>
         {selected.comparePrice ? (
-          <span className="font-body text-[14px] text-faint line-through">{formatMoney(selected.comparePrice)}</span>
+          <span className="font-body text-[13px] text-faint line-through">{formatMoney(selected.comparePrice)}</span>
         ) : null}
+        {discountPct ? <span className="status-pill bg-success-soft text-success-text">{discountPct}% OFF</span> : null}
       </div>
 
       {attributeKeys.map((key) => (
         <div key={key} className="mt-5">
-          <div className="eyebrow mb-2 capitalize">{key}</div>
-          <div className="flex flex-wrap gap-2">
+          <div className="font-body text-[12px] font-medium capitalize text-muted">{key}</div>
+          <div className="mt-2 flex flex-wrap gap-2">
             {variants
               .filter((v, idx, arr) => arr.findIndex((x) => x.attributes[key] === v.attributes[key]) === idx)
               .map((v) => {
@@ -63,12 +78,12 @@ export default function AddToCartPanel({ variants }: { variants: ProductVariant[
                     key={v.attributes[key]}
                     onClick={() => setSelectedId(target.id)}
                     disabled={disabled && target.id === v.id}
-                    className={`btn-pill border px-4 py-2 font-body text-[12.5px] ${
+                    className={`btn-pill border px-3.5 py-2 font-body text-[12px] font-medium ${
                       isActive
-                        ? "border-ink bg-ink text-paper"
+                        ? "border-accent bg-accent-soft text-accent-dark"
                         : disabled
-                          ? "border-border-faint text-faint/60"
-                          : "border-border-faint text-ink hover:border-ink"
+                          ? "border-border text-faint line-through"
+                          : "border-border text-muted hover:border-accent"
                     }`}
                   >
                     {v.attributes[key]}
@@ -79,33 +94,41 @@ export default function AddToCartPanel({ variants }: { variants: ProductVariant[
         </div>
       ))}
 
-      <div className="rule mt-6 pt-4 font-body text-[13px] leading-relaxed text-muted">
-        Standard delivery in 3-5 days · free over ₹999
-        <br />
-        {outOfStock ? (
-          <span className="font-semibold text-warn">Out of stock</span>
-        ) : (
-          <span className="font-semibold text-accent">
-            In stock{selected.lowStock ? ` · only ${selected.qtyAvailable} left` : ""}
-          </span>
-        )}{" "}
-        · 7-day returns
+      <div className="card mt-5 p-3.5 font-body text-[12px] text-muted">
+        <div className="flex justify-between">
+          <span>Availability</span>
+          {outOfStock ? (
+            <span className="font-medium text-warn">Out of stock</span>
+          ) : (
+            <span className="font-medium text-success">
+              In stock{selected.lowStock ? ` · only ${selected.qtyAvailable} left` : ""}
+            </span>
+          )}
+        </div>
+        <div className="mt-1.5 flex justify-between">
+          <span>Delivery</span>
+          <span className="font-medium text-ink">3-5 days · free over ₹999</span>
+        </div>
+        <div className="mt-1.5 flex justify-between">
+          <span>Returns</span>
+          <span className="text-ink">7-day, free pickup</span>
+        </div>
       </div>
 
-      <div className="mt-6 flex items-center gap-3">
+      <div className="mt-4 flex items-center gap-2.5">
         <button
           onClick={handleAdd}
           disabled={outOfStock || adding}
-          className="btn-pill flex h-12 flex-1 items-center justify-center bg-ink font-body text-[13.5px] font-medium text-paper disabled:opacity-40"
+          className="btn-pill btn-primary flex h-11 flex-1 items-center justify-center font-body text-[13px] font-semibold disabled:opacity-40 disabled:shadow-none"
         >
-          {outOfStock ? "Out of stock" : added ? "Added to bag" : adding ? "Adding…" : `Add to bag — ${formatMoney(selected.price)}`}
+          {outOfStock ? "Out of stock" : added ? "Added to cart" : adding ? "Adding…" : "Add to cart"}
         </button>
         <button
-          onClick={() => router.push("/cart")}
-          className="btn-pill flex h-12 w-12 items-center justify-center border border-border-faint text-ink hover:border-ink"
-          aria-label="Go to bag"
+          onClick={handleBuyNow}
+          disabled={outOfStock || adding}
+          className="btn-pill flex h-11 flex-1 items-center justify-center border-[1.5px] border-accent font-body text-[13px] font-semibold text-accent disabled:opacity-40"
         >
-          ♡
+          Buy now
         </button>
       </div>
     </div>

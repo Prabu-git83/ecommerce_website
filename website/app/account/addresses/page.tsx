@@ -28,7 +28,7 @@ export default function AddressesPage() {
 
   return (
     <div className="max-w-[560px]">
-      <h1 className="font-display text-[24px] font-extrabold tracking-tight text-ink">Addresses</h1>
+      <h1 className="font-display text-[24px] font-semibold tracking-tight text-ink">Addresses</h1>
 
       {!loading && addresses.length === 0 ? <p className="mt-4 text-[13.5px] text-muted">No saved addresses yet.</p> : null}
 
@@ -126,7 +126,7 @@ function NewAddressForm({ onCreated, onCancel }: { onCreated: (addr: Address) =>
         <button
           type="submit"
           disabled={saving}
-          className="btn-pill flex h-10 items-center justify-center bg-ink px-6 text-[12.5px] font-medium text-paper disabled:opacity-50"
+          className="btn-pill flex h-10 items-center justify-center btn-primary px-6 text-[12.5px] font-medium  disabled:opacity-50"
         >
           {saving ? "Saving…" : "Save address"}
         </button>

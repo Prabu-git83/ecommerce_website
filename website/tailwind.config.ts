@@ -1,26 +1,38 @@
 import type { Config } from "tailwindcss";
 
-// Design tokens lifted from the "1b — Atelier" mockup: warm paper background,
-// rule lines instead of card shadows, oversized display type, generous margins.
+// Design tokens lifted from the "1a — Signal" mockup: brand blue on light
+// slate, bordered/rounded cards, dense utility-first layout, filters and
+// status always visible.
 const config: Config = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        paper: "#F4F0E6",
-        chrome: "#EAE4D5",
-        surface: "#F9F6EE",
-        stripe: "#E2DACA",
+        paper: "#F8FAFC",
+        chrome: "#E8EDF3",
+        surface: "#FFFFFF",
+        stripe: "#E3E9F1",
         border: {
-          DEFAULT: "#E0DACA",
-          strong: "#DED7C6",
-          faint: "#CFC7B3",
+          DEFAULT: "#E2E8F0",
+          strong: "#D7DEE7",
+          faint: "#CBD5E1",
         },
-        ink: "#1F1D18",
-        muted: "#6E6959",
-        faint: "#9A927D",
-        accent: "#5F6B2E",
-        warn: "#A8441F",
+        ink: "#0F172A",
+        slate: "#1E293B",
+        muted: "#475569",
+        faint: "#94A3B8",
+        accent: "#1F63D6",
+        "accent-dark": "#164BA6",
+        "accent-soft": "#EEF4FE",
+        success: "#16A34A",
+        "success-soft": "#ECFDF3",
+        "success-text": "#166534",
+        warning: "#D97706",
+        "warning-soft": "#FEF3C7",
+        "warning-text": "#B45309",
+        warn: "#DC2626",
+        "warn-soft": "#FEE2E2",
+        "warn-text": "#991B1B",
       },
       fontFamily: {
         display: ["var(--font-display)", "sans-serif"],

@@ -70,7 +70,7 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="btn-pill mt-1 flex h-12 w-fit items-center justify-center bg-ink px-7 font-body text-[13.5px] font-medium text-paper disabled:opacity-50"
+        className="btn-pill mt-1 flex h-12 w-fit items-center justify-center btn-primary px-7 font-body text-[13.5px] font-medium  disabled:opacity-50"
       >
         {isSubmitting ? "Sending…" : "Send message"}
       </button>

@@ -25,7 +25,7 @@ export default function SortSelect() {
     <select
       value={current}
       onChange={(e) => onChange(e.target.value)}
-      className="!w-auto !py-2 !text-[12.5px] text-muted"
+      className="!w-auto !rounded-md !border-border !py-1.5 !text-[12px] text-muted"
       aria-label="Sort products"
     >
       {OPTIONS.map((o) => (

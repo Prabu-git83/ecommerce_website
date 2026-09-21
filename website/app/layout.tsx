@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Source_Sans_3, IBM_Plex_Mono } from "next/font/google";
+import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -8,8 +8,8 @@ import AuthHydrator from "@/components/AuthHydrator";
 import { apiGet } from "@/lib/api";
 import type { Category } from "@/lib/types";
 
-const display = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-display", weight: ["600", "700", "800"] });
-const body = Source_Sans_3({ subsets: ["latin"], variable: "--font-body", weight: ["400", "500", "600", "700"] });
+const display = IBM_Plex_Sans({ subsets: ["latin"], variable: "--font-display", weight: ["500", "600", "700"] });
+const body = IBM_Plex_Sans({ subsets: ["latin"], variable: "--font-body", weight: ["400", "500", "600", "700"] });
 const mono = IBM_Plex_Mono({ subsets: ["latin"], variable: "--font-mono", weight: ["400", "500"] });
 
 export const metadata: Metadata = {

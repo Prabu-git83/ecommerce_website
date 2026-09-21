@@ -14,9 +14,9 @@ type ShippingRate = { code: string; label: string; etaDays: string; amount: numb
 type Step = "address" | "shipping" | "payment";
 
 const STEPS: { key: Step; label: string }[] = [
-  { key: "address", label: "2 Address" },
-  { key: "shipping", label: "3 Shipping" },
-  { key: "payment", label: "4 Payment" },
+  { key: "address", label: "2 ADDRESS" },
+  { key: "shipping", label: "3 SHIPPING" },
+  { key: "payment", label: "4 PAYMENT" },
 ];
 
 export default function CheckoutPage() {
@@ -59,9 +59,9 @@ export default function CheckoutPage() {
   if (!orderId) {
     return (
       <div className="mx-auto max-w-content px-5 py-20 text-center sm:px-10">
-        <p className="text-ink">Start checkout from your bag.</p>
-        <Link href="/cart" className="btn-pill mt-6 inline-flex bg-ink px-6 py-3 text-[13px] text-paper">
-          Go to bag
+        <p className="text-ink">Start checkout from your cart.</p>
+        <Link href="/cart" className="btn-pill btn-primary mt-6 inline-flex px-6 py-2.5 text-[13px] font-semibold">
+          Go to cart
         </Link>
       </div>
     );
@@ -118,32 +118,34 @@ export default function CheckoutPage() {
 
   const selectedAddress = addresses.find((a) => a.id === selectedAddressId);
   const total = order.total;
+  const stepIndex = STEPS.findIndex((s) => s.key === step);
 
   return (
-    <div className="mx-auto max-w-content px-5 py-8 sm:px-10 sm:py-12">
-      <div className="rule flex flex-wrap items-center justify-between gap-3 pb-4">
-        <span className="font-display text-2xl font-extrabold tracking-tight text-ink">Checkout</span>
-        <div className="flex gap-5 font-mono text-[11px] uppercase tracking-[0.1em] text-faint">
-          <span className="text-ink">1 Bag</span>
-          {STEPS.map((s) => (
-            <span key={s.key} className={step === s.key ? "border-b-[1.5px] border-accent pb-0.5 text-accent" : "text-ink"}>
-              {s.label}
+    <div className="mx-auto max-w-content px-5 py-6 sm:px-10 sm:py-8">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3.5">
+        <span className="font-display text-[19px] font-semibold text-ink">Checkout</span>
+        <div className="flex items-center gap-2.5 font-mono text-[10.5px] font-medium tracking-[0.06em]">
+          <span className="text-accent">1 CART</span>
+          {STEPS.map((s, i) => (
+            <span key={s.key} className="flex items-center gap-2.5">
+              <span className={`h-[1.5px] w-5 ${i <= stepIndex ? "bg-accent" : "bg-border-faint"}`} />
+              <span className={i <= stepIndex ? "text-accent" : "text-faint"}>{s.label}</span>
             </span>
           ))}
         </div>
       </div>
 
-      <div className="flex flex-col gap-11 pt-8 lg:flex-row">
+      <div className="flex flex-col gap-8 pt-6 lg:flex-row">
         <div className="flex-1">
           {step === "address" ? (
             <div>
-              <h2 className="font-display text-[22px] font-extrabold tracking-tight text-ink">Delivery address</h2>
-              <div className="mt-5 flex flex-col gap-3">
+              <h2 className="font-display text-[17px] font-semibold text-ink">Delivery address</h2>
+              <div className="mt-4 flex flex-col gap-2.5">
                 {addresses.map((addr) => (
                   <label
                     key={addr.id}
-                    className={`flex cursor-pointer items-start justify-between gap-3 rounded-lg border p-4 ${
-                      selectedAddressId === addr.id ? "border-ink" : "border-border-faint"
+                    className={`flex cursor-pointer items-start justify-between gap-3 rounded-lg border p-3.5 ${
+                      selectedAddressId === addr.id ? "border-accent bg-accent-soft/40" : "border-border"
                     }`}
                   >
                     <div className="flex gap-3">
@@ -151,9 +153,9 @@ export default function CheckoutPage() {
                         type="radio"
                         checked={selectedAddressId === addr.id}
                         onChange={() => setSelectedAddressId(addr.id)}
-                        className="mt-1"
+                        className="mt-1 accent-accent"
                       />
-                      <div className="text-[13.5px] leading-relaxed text-ink">
+                      <div className="text-[13px] leading-relaxed text-ink">
                         <div className="font-semibold">{addr.fullName}</div>
                         <div className="text-muted">
                           {addr.line1}, {addr.line2 ? `${addr.line2}, ` : ""}
@@ -175,7 +177,7 @@ export default function CheckoutPage() {
                   }}
                 />
               ) : (
-                <button onClick={() => setShowAddressForm(true)} className="mt-4 text-[13px] text-accent hover:underline">
+                <button onClick={() => setShowAddressForm(true)} className="mt-3.5 text-[13px] font-medium text-accent hover:underline">
                   + Add a new address
                 </button>
               )}
@@ -183,7 +185,7 @@ export default function CheckoutPage() {
               {error ? <p className="mt-3 text-[13px] text-warn">{error}</p> : null}
               <button
                 onClick={goToShipping}
-                className="btn-pill mt-6 flex h-12 items-center justify-center bg-ink px-8 font-body text-[13.5px] font-medium text-paper"
+                className="btn-pill btn-primary mt-5 flex h-11 items-center justify-center px-7 font-body text-[13px] font-semibold"
               >
                 Continue to shipping
               </button>
@@ -192,21 +194,21 @@ export default function CheckoutPage() {
 
           {step === "shipping" ? (
             <div>
-              <h2 className="font-display text-[22px] font-extrabold tracking-tight text-ink">Shipping method</h2>
+              <h2 className="font-display text-[17px] font-semibold text-ink">Shipping method</h2>
               {selectedAddress ? (
-                <p className="mt-2 text-[13px] text-muted">
+                <p className="mt-1.5 text-[12.5px] text-muted">
                   Delivering to {selectedAddress.fullName} · {selectedAddress.city}, {selectedAddress.state} {selectedAddress.postcode}{" "}
-                  <button onClick={() => setStep("address")} className="text-accent hover:underline">
+                  <button onClick={() => setStep("address")} className="font-medium text-accent hover:underline">
                     Change
                   </button>
                 </p>
               ) : null}
-              <div className="mt-5 flex flex-col gap-3">
+              <div className="mt-4 flex flex-col gap-2.5">
                 {rates.map((rate) => (
                   <label
                     key={rate.code}
-                    className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 ${
-                      selectedShipping === rate.code ? "border-ink" : "border-border-faint"
+                    className={`flex cursor-pointer items-center justify-between rounded-lg border p-3.5 ${
+                      selectedShipping === rate.code ? "border-accent bg-accent-soft/40" : "border-border"
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -214,13 +216,14 @@ export default function CheckoutPage() {
                         type="radio"
                         checked={selectedShipping === rate.code}
                         onChange={() => setSelectedShipping(rate.code as "standard" | "express")}
+                        className="accent-accent"
                       />
-                      <div className="text-[13.5px] text-ink">
+                      <div className="text-[13px] text-ink">
                         <div className="font-semibold">{rate.label}</div>
                         <div className="text-muted">{rate.etaDays}</div>
                       </div>
                     </div>
-                    <div className="text-[13.5px] font-semibold text-ink">{rate.amount === 0 ? "Free" : formatMoney(rate.amount)}</div>
+                    <div className="text-[13px] font-semibold text-ink">{rate.amount === 0 ? "Free" : formatMoney(rate.amount)}</div>
                   </label>
                 ))}
               </div>
@@ -228,7 +231,7 @@ export default function CheckoutPage() {
               <button
                 onClick={confirmShippingAndProceed}
                 disabled={busy}
-                className="btn-pill mt-6 flex h-12 items-center justify-center bg-ink px-8 font-body text-[13.5px] font-medium text-paper disabled:opacity-50"
+                className="btn-pill btn-primary mt-5 flex h-11 items-center justify-center px-7 font-body text-[13px] font-semibold disabled:opacity-50 disabled:shadow-none"
               >
                 {busy ? "Saving…" : "Continue to payment"}
               </button>
@@ -237,11 +240,11 @@ export default function CheckoutPage() {
 
           {step === "payment" ? (
             <div>
-              <h2 className="font-display text-[22px] font-extrabold tracking-tight text-ink">Payment</h2>
-              <p className="mt-2 text-[13px] text-muted">
-                Payments run on a local mock gateway for Phase 1 — card, UPI and wallet capture instantly; COD stays pending until delivery.
+              <h2 className="font-display text-[17px] font-semibold text-ink">Payment method</h2>
+              <p className="mt-1.5 text-[12.5px] text-muted">
+                Payments run on a local mock gateway for now — card, UPI and wallet capture instantly; COD stays pending until delivery.
               </p>
-              <div className="mt-5 flex flex-col gap-3">
+              <div className="mt-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                 {(
                   [
                     { key: "upi", label: "UPI" },
@@ -252,12 +255,12 @@ export default function CheckoutPage() {
                 ).map((m) => (
                   <label
                     key={m.key}
-                    className={`flex cursor-pointer items-center gap-3 rounded-lg border p-4 ${
-                      paymentMethod === m.key ? "border-ink" : "border-border-faint"
+                    className={`flex cursor-pointer items-center gap-2.5 rounded-lg border p-3 ${
+                      paymentMethod === m.key ? "border-accent bg-accent-soft/40" : "border-border"
                     }`}
                   >
-                    <input type="radio" checked={paymentMethod === m.key} onChange={() => setPaymentMethod(m.key)} />
-                    <span className="text-[13.5px] font-medium text-ink">{m.label}</span>
+                    <input type="radio" checked={paymentMethod === m.key} onChange={() => setPaymentMethod(m.key)} className="accent-accent" />
+                    <span className="text-[12.5px] font-medium text-ink">{m.label}</span>
                   </label>
                 ))}
               </div>
@@ -265,7 +268,7 @@ export default function CheckoutPage() {
               <button
                 onClick={payNow}
                 disabled={busy}
-                className="btn-pill mt-6 flex h-12 items-center justify-center bg-ink px-8 font-body text-[13.5px] font-medium text-paper disabled:opacity-50"
+                className="btn-pill btn-primary mt-5 flex h-11 items-center justify-center px-7 font-body text-[13px] font-semibold disabled:opacity-50 disabled:shadow-none"
               >
                 {busy ? "Processing…" : `Pay ${formatMoney(total)}`}
               </button>
@@ -274,16 +277,18 @@ export default function CheckoutPage() {
         </div>
 
         <div className="w-full lg:w-[280px]">
-          <div className="rule-strong eyebrow pb-3.5">Order summary</div>
-          <div className="pt-3.5 text-[13px] text-muted">
-            <Row label="Subtotal" value={formatMoney(order.subtotal)} />
-            {Number(order.discountAmount) > 0 ? <Row label="Discount" value={`−${formatMoney(order.discountAmount)}`} accent /> : null}
-            <Row label="Tax" value={formatMoney(order.taxAmount)} />
-            <Row label="Shipping" value={Number(order.shippingAmount) === 0 ? "Free" : formatMoney(order.shippingAmount)} />
-            <div className="rule mt-1 mb-3" />
-            <div className="flex items-baseline justify-between">
-              <span className="font-semibold text-ink">Total</span>
-              <span className="font-display text-[24px] font-extrabold tracking-tight text-ink">{formatMoney(order.total)}</span>
+          <div className="card p-4">
+            <div className="font-body text-[13px] font-semibold text-ink">Order summary</div>
+            <div className="mt-3 text-[12.5px] text-muted">
+              <Row label="Subtotal" value={formatMoney(order.subtotal)} />
+              {Number(order.discountAmount) > 0 ? <Row label="Discount" value={`−${formatMoney(order.discountAmount)}`} accent /> : null}
+              <Row label="Tax" value={formatMoney(order.taxAmount)} />
+              <Row label="Shipping" value={Number(order.shippingAmount) === 0 ? "Free" : formatMoney(order.shippingAmount)} />
+              <div className="mb-3 mt-1 border-b border-border pb-3" />
+              <div className="flex items-baseline justify-between">
+                <span className="font-semibold text-ink">Total</span>
+                <span className="font-mono text-[18px] font-semibold text-ink">{formatMoney(order.total)}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -294,9 +299,9 @@ export default function CheckoutPage() {
 
 function Row({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
-    <div className="mb-2 flex justify-between">
+    <div className="mb-1.5 flex justify-between">
       <span>{label}</span>
-      <span className={accent ? "text-accent" : ""}>{value}</span>
+      <span className={accent ? "font-mono text-success" : "font-mono"}>{value}</span>
     </div>
   );
 }
@@ -329,7 +334,7 @@ function NewAddressForm({ onCreated }: { onCreated: (addr: Address) => void }) {
   }
 
   return (
-    <form onSubmit={submit} className="mt-4 grid grid-cols-2 gap-3 rounded-lg border border-border-faint p-4">
+    <form onSubmit={submit} className="mt-3.5 grid grid-cols-2 gap-3 rounded-lg border border-border p-3.5">
       <Field label="Full name">
         <input required value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} className="w-full" />
       </Field>
@@ -360,7 +365,7 @@ function NewAddressForm({ onCreated }: { onCreated: (addr: Address) => void }) {
         <button
           type="submit"
           disabled={saving}
-          className="btn-pill flex h-10 items-center justify-center bg-ink px-6 text-[12.5px] font-medium text-paper disabled:opacity-50"
+          className="btn-pill flex h-10 items-center justify-center bg-ink px-6 text-[12.5px] font-medium text-white disabled:opacity-50"
         >
           {saving ? "Saving…" : "Save address"}
         </button>

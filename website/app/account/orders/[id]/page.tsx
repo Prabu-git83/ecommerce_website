@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import PlaceholderImage from "@/components/PlaceholderImage";
+import OrderStatusPill from "@/components/OrderStatusPill";
 import { apiGetJson, apiPost, ApiClientError } from "@/lib/client-api";
 import { formatMoney, formatDate } from "@/lib/format";
 import type { OrderDetail } from "@/lib/types";
@@ -47,7 +48,7 @@ export default function OrderDetailPage() {
   return (
     <div>
       {searchParams.get("confirmed") ? (
-        <div className="mb-6 rounded-lg border border-accent/40 bg-accent/10 px-4 py-3 text-[13.5px] text-accent">
+        <div className="mb-6 rounded-lg border border-success/30 bg-success-soft px-4 py-3 text-[13.5px] text-success-text">
           Order confirmed — a confirmation email is on its way.
         </div>
       ) : null}
@@ -55,9 +56,9 @@ export default function OrderDetailPage() {
       <div className="rule-strong flex flex-wrap items-baseline justify-between gap-2 pb-4">
         <div>
           <div className="font-mono text-[12px] text-faint">{order.orderNumber}</div>
-          <h1 className="mt-1 font-display text-[24px] font-extrabold tracking-tight text-ink">{formatDate(order.createdAt)}</h1>
+          <h1 className="mt-1 font-display text-[24px] font-semibold tracking-tight text-ink">{formatDate(order.createdAt)}</h1>
         </div>
-        <span className="text-[13px] font-medium text-accent">{order.status.replace(/_/g, " ")}</span>
+        <OrderStatusPill status={order.status} />
       </div>
 
       <div className="mt-6 flex flex-col gap-11 lg:flex-row">

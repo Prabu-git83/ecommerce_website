@@ -3,67 +3,99 @@
 @tailwind utilities;
 
 html {
-  background: #f4f0e6;
+  background: #f8fafc;
 }
 
 body {
-  color: #1f1d18;
+  color: #0f172a;
 }
 
 ::selection {
-  background: #1f1d18;
-  color: #f4f0e6;
+  background: #1f63d6;
+  color: #fff;
 }
 
 .eyebrow {
   font-family: var(--font-mono), monospace;
   font-size: 10.5px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #9a927d;
+  color: #94a3b8;
 }
 
 .rule {
-  border-bottom: 1px solid #e0dacA;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .rule-strong {
-  border-bottom: 1.5px solid #1f1d18;
+  border-bottom: 1.5px solid #0f172a;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
 }
 
 .stripe-placeholder {
-  background-image: repeating-linear-gradient(45deg, #eae4d5, #eae4d5 11px, #e2daca 11px, #e2daca 22px);
+  background-image: repeating-linear-gradient(45deg, #eef2f7, #eef2f7 7px, #e3e9f1 7px, #e3e9f1 14px);
 }
 
+/* Signal uses rounded-lg (8px) for buttons/chips, reserving full pill shape
+   for status badges and count bubbles only — kept the .btn-pill class name
+   so every existing call site picks up the shape change for free. */
 .btn-pill {
-  border-radius: 9999px;
-  transition: opacity 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+  border-radius: 8px;
+  transition: opacity 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .btn-pill:active {
-  opacity: 0.8;
+  opacity: 0.85;
+}
+
+.btn-primary {
+  background: #1f63d6;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(31, 99, 214, 0.32);
+}
+
+.btn-primary:hover {
+  background: #164ba6;
 }
 
 input,
 select,
 textarea {
-  background: #f9f6ee;
-  border: 1px solid #ded7c6;
+  background: #fff;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  padding: 11px 14px;
+  padding: 10px 13px;
   font-family: var(--font-body), sans-serif;
-  font-size: 14px;
-  color: #1f1d18;
+  font-size: 13.5px;
+  color: #0f172a;
   outline: none;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: #1f1d18;
+  border-color: #1f63d6;
+  box-shadow: 0 0 0 3px #eef4fe;
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: #9a927d;
+  color: #94a3b8;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 9999px;
 }

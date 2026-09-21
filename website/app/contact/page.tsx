@@ -4,7 +4,7 @@ export default function ContactPage() {
   return (
     <div className="mx-auto max-w-content px-5 py-10 sm:px-10 sm:py-16">
       <div className="eyebrow">Get in touch</div>
-      <h1 className="mt-2 font-display text-[36px] font-extrabold tracking-tight text-ink sm:text-[44px]">Contact us</h1>
+      <h1 className="mt-2 font-display text-[36px] font-semibold tracking-tight text-ink sm:text-[44px]">Contact us</h1>
       <p className="mt-3 max-w-[440px] text-[14.5px] leading-relaxed text-muted">
         Questions about an order, a product, or anything else — send a message and our team will get back to you within 1-2 business days.
       </p>

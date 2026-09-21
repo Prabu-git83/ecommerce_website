@@ -1,5 +1,7 @@
+import Link from "next/link";
 import ProductCard from "./ProductCard";
 import SortSelect from "./SortSelect";
+import PriceFilter from "./PriceFilter";
 import { apiGetWithMeta } from "@/lib/api";
 import type { Category, ProductSummary } from "@/lib/types";
 
@@ -24,28 +26,52 @@ export default async function ProductListing({
   const category = (meta?.category as Category | null | undefined) ?? null;
 
   const heading = searchParams.q ? `Results for "${searchParams.q}"` : category?.name ?? "All products";
-  const eyebrow = searchParams.q ? "Search" : category ? category.slug.toUpperCase().replace(/-/g, " / ") : "Shop";
+  const breadcrumb = searchParams.q ? "SEARCH" : category ? `HOME / ${category.slug.toUpperCase().replace(/-/g, " / ")}` : "HOME / SHOP";
+
+  const filterCount = [searchParams.minPrice, searchParams.maxPrice].filter(Boolean).length;
 
   return (
-    <div className="mx-auto max-w-content px-5 py-8 sm:px-10 sm:py-12">
-      <div className="eyebrow">{eyebrow}</div>
-      <div className="rule-strong mt-2 flex flex-wrap items-end justify-between gap-3 pb-4">
-        <h1 className="font-display text-[30px] font-extrabold tracking-tight text-ink sm:text-[34px]">{heading}</h1>
-        <div className="flex items-center gap-5 text-[12.5px] text-muted">
-          <span>{items.length} items</span>
-          {!searchParams.q ? <SortSelect /> : null}
+    <div className="mx-auto max-w-content px-5 py-6 sm:px-10">
+      <div className="font-mono text-[10.5px] text-faint">{breadcrumb}</div>
+
+      <div className="mt-6 flex gap-8">
+        {!searchParams.q ? (
+          <aside className="hidden w-[200px] flex-none lg:block">
+            <PriceFilter />
+          </aside>
+        ) : null}
+
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h1 className="font-display text-[20px] font-semibold text-ink">
+              {heading} <span className="font-mono text-[12px] font-normal text-muted">{items.length} results</span>
+            </h1>
+            {!searchParams.q ? (
+              <div className="flex items-center gap-3">
+                {filterCount > 0 ? (
+                  <span className="font-mono text-[11px] text-accent">Filters · {filterCount} active</span>
+                ) : null}
+                <SortSelect />
+              </div>
+            ) : null}
+          </div>
+
+          {items.length > 0 ? (
+            <div className="mt-5 grid grid-cols-2 gap-3.5 sm:grid-cols-3 lg:grid-cols-4">
+              {items.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          ) : (
+            <div className="mt-10 text-sm text-muted">
+              No products found.{" "}
+              <Link href="/products" className="text-accent hover:underline">
+                Clear filters
+              </Link>
+            </div>
+          )}
         </div>
       </div>
-
-      {items.length > 0 ? (
-        <div className="mt-6 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
-          {items.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
-      ) : (
-        <p className="mt-10 text-sm text-muted">No products found.</p>
-      )}
     </div>
   );
 }

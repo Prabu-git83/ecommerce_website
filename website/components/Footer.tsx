@@ -2,8 +2,8 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="mt-24 border-t border-border">
-      <div className="mx-auto max-w-content px-5 py-14 sm:px-10">
+    <footer className="mt-16 border-t border-border bg-surface">
+      <div className="mx-auto max-w-content px-5 py-12 sm:px-10">
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-4">
           <div>
             <div className="font-display text-lg font-extrabold text-ink">ARCA</div>

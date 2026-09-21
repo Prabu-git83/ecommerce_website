@@ -67,7 +67,7 @@ export default function OtpLoginForm({ onSuccess }: { onSuccess: () => void }) {
         <button
           type="submit"
           disabled={sending}
-          className="btn-pill mt-2 flex h-12 items-center justify-center bg-ink font-body text-[13.5px] font-medium text-paper disabled:opacity-50"
+          className="btn-pill btn-primary mt-2 flex h-11 items-center justify-center font-body text-[13px] font-semibold disabled:opacity-50 disabled:shadow-none"
         >
           {sending ? "Sending code…" : "Send sign-in code"}
         </button>
@@ -100,7 +100,7 @@ export default function OtpLoginForm({ onSuccess }: { onSuccess: () => void }) {
       <button
         type="submit"
         disabled={verifying || code.length !== 6}
-        className="btn-pill mt-2 flex h-12 items-center justify-center bg-ink font-body text-[13.5px] font-medium text-paper disabled:opacity-50"
+        className="btn-pill btn-primary mt-2 flex h-11 items-center justify-center font-body text-[13px] font-semibold disabled:opacity-50 disabled:shadow-none"
       >
         {verifying ? "Verifying…" : "Verify & sign in"}
       </button>

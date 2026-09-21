@@ -40,7 +40,7 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-[440px]">
-      <h1 className="font-display text-[24px] font-extrabold tracking-tight text-ink">Your profile</h1>
+      <h1 className="font-display text-[24px] font-semibold tracking-tight text-ink">Your profile</h1>
       <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-4">
         <div className="grid grid-cols-2 gap-3">
           <Field label="First name">
@@ -61,7 +61,7 @@ export default function ProfilePage() {
         <button
           type="submit"
           disabled={saving}
-          className="btn-pill mt-2 flex h-11 w-fit items-center justify-center bg-ink px-6 font-body text-[13px] font-medium text-paper disabled:opacity-50"
+          className="btn-pill btn-primary mt-2 flex h-11 w-fit items-center justify-center px-6 font-body text-[13px] font-semibold disabled:opacity-50 disabled:shadow-none"
         >
           {saving ? "Saving…" : "Save changes"}
         </button>

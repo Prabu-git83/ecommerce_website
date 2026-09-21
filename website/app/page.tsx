@@ -1,47 +1,50 @@
 import Link from "next/link";
-import PlaceholderImage from "@/components/PlaceholderImage";
 import ProductCard from "@/components/ProductCard";
 import { apiGet } from "@/lib/api";
 import type { ProductSummary } from "@/lib/types";
 
 export default async function HomePage() {
-  const featured = await apiGet<ProductSummary[]>("/products/featured?limit=8", 60).catch(() => []);
+  const featured = await apiGet<ProductSummary[]>("/products/featured?limit=10", 60).catch(() => []);
 
   return (
-    <div className="mx-auto max-w-content px-5 sm:px-10">
-      <section className="flex flex-col gap-8 border-b border-border py-10 sm:flex-row sm:items-center sm:py-16">
-        <div className="flex-1">
-          <div className="eyebrow">Banner · New season</div>
-          <h1 className="mt-4 font-display text-[40px] font-extrabold leading-[1.02] tracking-tight text-ink sm:text-[56px]">
-            The Monsoon
-            <br />
-            Edit
-          </h1>
-          <p className="mt-4 max-w-[380px] text-[15px] leading-relaxed text-muted">
-            Forty pieces chosen for the season, across electronics, home and wardrobe. Considered goods, made to last.
+    <div className="mx-auto max-w-content px-5 py-6 sm:px-10">
+      <section className="flex flex-col gap-4 sm:flex-row">
+        <div
+          className="flex flex-1 flex-col justify-center rounded-lg p-7 text-white sm:p-9"
+          style={{ background: "linear-gradient(100deg, #1F63D6, #164BA6)" }}
+        >
+          <span className="font-mono text-[10px] uppercase tracking-[0.12em] opacity-80">Banner · New season</span>
+          <h1 className="mt-2.5 font-display text-[30px] font-semibold leading-[1.15] tracking-tight sm:text-[38px]">The Monsoon Edit</h1>
+          <p className="mt-1.5 max-w-[380px] text-[14px] opacity-90">
+            Up to 40% off across electronics, home and wardrobe — ends Sunday.
           </p>
           <Link
             href="/products"
-            className="btn-pill mt-6 inline-flex items-center bg-ink px-6 py-3 font-body text-[13px] font-medium text-paper hover:opacity-90"
+            className="btn-pill mt-5 inline-flex w-fit items-center bg-white px-5 py-2.5 font-body text-[12.5px] font-semibold text-accent-dark"
           >
             Shop the edit
           </Link>
         </div>
-        <PlaceholderImage
-          alt="Editorial hero"
-          label="editorial hero image"
-          className="h-[220px] w-full flex-1 sm:h-[320px]"
-        />
-      </section>
-
-      <section className="py-10 sm:py-14">
-        <div className="rule-strong flex items-end justify-between pb-3.5">
-          <h2 className="font-display text-xl font-extrabold tracking-tight text-ink sm:text-2xl">Featured</h2>
-          <Link href="/products" className="text-[12.5px] text-accent hover:underline">
-            View all
+        <div className="flex flex-1 flex-col gap-3 sm:max-w-[280px]">
+          <Link href="/account/orders" className="card flex-1 p-4 hover:border-accent">
+            <div className="font-body text-[13px] font-semibold text-ink">Your order history</div>
+            <div className="mt-1 text-[11.5px] text-muted">Reorder something you loved</div>
+          </Link>
+          <Link href="/account/orders" className="card flex-1 p-4 hover:border-accent">
+            <div className="font-body text-[13px] font-semibold text-ink">Track an order</div>
+            <div className="mt-1 text-[11.5px] text-success">View live delivery status</div>
           </Link>
         </div>
-        <div className="mt-5 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+      </section>
+
+      <section className="py-10 sm:py-12">
+        <div className="flex items-baseline justify-between">
+          <h2 className="font-display text-[17px] font-semibold text-ink">Featured</h2>
+          <Link href="/products" className="text-[12px] font-medium text-accent hover:underline">
+            See all
+          </Link>
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-3.5 sm:grid-cols-3 lg:grid-cols-5">
           {featured.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
