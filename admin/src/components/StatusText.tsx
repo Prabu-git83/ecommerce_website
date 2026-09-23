@@ -22,6 +22,11 @@ const STYLES: Record<string, string> = {
   low_stock: "bg-warning-soft text-warning-text",
   out_of_stock: "bg-warn-soft text-warn-text",
   in_stock: "bg-success-soft text-success-text",
+  // ticket status
+  new: "bg-warning-soft text-warning-text",
+  open: "bg-accent-soft text-accent-dark",
+  resolved: "bg-success-soft text-success-text",
+  closed: "bg-chrome text-slate",
 };
 
 export default function StatusText({ status, label }: { status: string; label?: string }) {

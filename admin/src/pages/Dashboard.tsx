@@ -51,9 +51,9 @@ export default function Dashboard() {
             {summary.revenueByDay.length === 0 ? (
               <p className="mt-4 text-[13px] text-muted">No paid orders in the last 30 days yet.</p>
             ) : (
-              <div className="mt-4 flex h-[160px] items-end gap-1.5">
+              <div className="mt-4 flex h-[160px] gap-1.5">
                 {summary.revenueByDay.map((d) => (
-                  <div key={d.date} className="group relative flex-1">
+                  <div key={d.date} className="group relative flex h-full flex-1 flex-col justify-end">
                     <div
                       className="w-full rounded-t-sm bg-accent/35 transition-colors group-hover:bg-accent"
                       style={{ height: `${Math.max(4, (d.total / maxRevenue) * 100)}%` }}

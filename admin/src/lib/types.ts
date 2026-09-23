@@ -161,3 +161,45 @@ export type DashboardSummary = {
 };
 
 export type Warehouse = { id: string; name: string; code: string };
+
+export type TicketListItem = {
+  id: string;
+  name: string;
+  email: string;
+  subject: string | null;
+  message: string;
+  status: string;
+  createdAt: string;
+};
+
+export type TicketReply = { id: string; ticketId: string; adminUserId: string | null; note: string; createdAt: string };
+
+export type TicketDetail = TicketListItem & { replies: TicketReply[] };
+
+export type AdminUser = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type PlatformSettings = {
+  default_tax_rate: string;
+  low_stock_threshold: string;
+  free_shipping_threshold: string;
+  currency: string;
+  support_email: string;
+  support_hours: string;
+};
+
+export type Analytics = {
+  totals: { totalRevenue: number; totalOrders: number; avgOrderValue: number; totalCustomers: number };
+  revenueByDay: { date: string; total: number }[];
+  ordersByStatus: { status: string; count: number }[];
+  topProducts: { name: string; unitsSold: number; revenue: number }[];
+  salesByCategory: { category: string; revenue: number; unitsSold: number }[];
+  customerGrowth: { week: string; count: number }[];
+};

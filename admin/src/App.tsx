@@ -11,6 +11,11 @@ import OrdersList from "./pages/orders/OrdersList";
 import OrderDetail from "./pages/orders/OrderDetail";
 import CustomersList from "./pages/customers/CustomersList";
 import CustomerDetail from "./pages/customers/CustomerDetail";
+import TicketsList from "./pages/tickets/TicketsList";
+import TicketDetail from "./pages/tickets/TicketDetail";
+import UsersList from "./pages/users/UsersList";
+import Configuration from "./pages/settings/Configuration";
+import Analytics from "./pages/analytics/Analytics";
 
 export default function App() {
   return (
@@ -28,6 +33,11 @@ export default function App() {
         <Route path="/orders/:id" element={<OrderDetail />} />
         <Route path="/customers" element={<CustomersList />} />
         <Route path="/customers/:id" element={<CustomerDetail />} />
+        <Route path="/tickets" element={<TicketsList />} />
+        <Route path="/tickets/:id" element={<TicketDetail />} />
+        <Route path="/users" element={<UsersList />} />
+        <Route path="/settings" element={<Configuration />} />
+        <Route path="/analytics" element={<Analytics />} />
       </Route>
     </Routes>
   );

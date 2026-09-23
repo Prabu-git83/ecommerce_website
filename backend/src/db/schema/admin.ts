@@ -2,6 +2,7 @@ import { pgTable, uuid, varchar, text, integer, numeric, timestamp } from "drizz
 import { users } from "./users";
 import { productVariants, warehouses } from "./catalogue";
 import { payments } from "./orders";
+import { contactMessages } from "./misc";
 
 export const adminUsers = pgTable("admin_users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -48,4 +49,21 @@ export const customerNotes = pgTable("customer_notes", {
   adminUserId: uuid("admin_user_id").references(() => adminUsers.id),
   note: text("note").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Internal reply/resolution log on a support ticket (a contact_messages row).
+export const ticketReplies = pgTable("ticket_replies", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  ticketId: uuid("ticket_id").notNull().references(() => contactMessages.id, { onDelete: "cascade" }),
+  adminUserId: uuid("admin_user_id").references(() => adminUsers.id),
+  note: text("note").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Flat key/value store for platform-wide settings editable from the admin
+// Configuration page (default tax rate, low-stock threshold, etc).
+export const platformSettings = pgTable("platform_settings", {
+  key: varchar("key", { length: 100 }).primaryKey(),
+  value: text("value").notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

@@ -9,7 +9,16 @@ const OPERATIONS = [
   { to: "/inventory", label: "Inventory" },
 ];
 
-const SUPPORT = [{ to: "/customers", label: "Customers" }];
+const SUPPORT = [
+  { to: "/tickets", label: "Tickets" },
+  { to: "/customers", label: "Customers" },
+];
+
+const ADMINISTRATION = [
+  { to: "/analytics", label: "Analytics" },
+  { to: "/users", label: "Users & roles" },
+  { to: "/settings", label: "Configuration" },
+];
 
 function initials(name?: string) {
   if (!name) return "AA";
@@ -59,7 +68,14 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      <div className="mt-auto flex items-center gap-2.5 border-t border-slate px-4 pt-3.5">
+      <div className="px-4 pb-2 pt-4 font-mono text-[9px] font-medium uppercase tracking-[0.12em] text-sidebar-label">Administration</div>
+      <nav className="flex flex-col gap-0.5 px-2">
+        {ADMINISTRATION.map((item) => (
+          <NavItem key={item.to} {...item} />
+        ))}
+      </nav>
+
+      <div className="mt-auto flex items-center gap-2.5 overflow-hidden border-t border-slate px-4 pt-3.5">
         <span className="flex h-[26px] w-[26px] flex-none items-center justify-center rounded-md bg-slate font-body text-[11px] font-semibold text-faint">
           {initials(admin?.name)}
         </span>
