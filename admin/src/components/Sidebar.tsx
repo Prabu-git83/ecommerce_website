@@ -64,45 +64,47 @@ export default function Sidebar() {
 
   return (
     <aside className="flex h-screen w-[220px] flex-none flex-col bg-ink py-4">
-      <div className="flex items-center gap-2.5 px-4 pb-5">
+      <div className="flex flex-none items-center gap-2.5 px-4 pb-5">
         <span className="block h-[22px] w-[22px] rounded-[5px] bg-accent" />
         <span className="font-display text-[14px] font-bold text-white">ARCA Admin</span>
       </div>
 
-      {operations.length > 0 ? (
-        <>
-          <div className="px-4 pb-2 font-mono text-[9px] font-medium uppercase tracking-[0.12em] text-sidebar-label">Operations</div>
-          <nav className="flex flex-col gap-0.5 px-2">
-            {operations.map((item) => (
-              <NavItem key={item.to} to={item.to} label={item.label} end={item.end} />
-            ))}
-          </nav>
-        </>
-      ) : null}
+      <div className="flex-1 overflow-y-auto pb-3">
+        {operations.length > 0 ? (
+          <>
+            <div className="px-4 pb-2 font-mono text-[9px] font-medium uppercase tracking-[0.12em] text-sidebar-label">Operations</div>
+            <nav className="flex flex-col gap-0.5 px-2">
+              {operations.map((item) => (
+                <NavItem key={item.to} to={item.to} label={item.label} end={item.end} />
+              ))}
+            </nav>
+          </>
+        ) : null}
 
-      {support.length > 0 ? (
-        <>
-          <div className="px-4 pb-2 pt-4 font-mono text-[9px] font-medium uppercase tracking-[0.12em] text-sidebar-label">Support</div>
-          <nav className="flex flex-col gap-0.5 px-2">
-            {support.map((item) => (
-              <NavItem key={item.to} to={item.to} label={item.label} />
-            ))}
-          </nav>
-        </>
-      ) : null}
+        {support.length > 0 ? (
+          <>
+            <div className="px-4 pb-2 pt-4 font-mono text-[9px] font-medium uppercase tracking-[0.12em] text-sidebar-label">Support</div>
+            <nav className="flex flex-col gap-0.5 px-2">
+              {support.map((item) => (
+                <NavItem key={item.to} to={item.to} label={item.label} />
+              ))}
+            </nav>
+          </>
+        ) : null}
 
-      {administration.length > 0 ? (
-        <>
-          <div className="px-4 pb-2 pt-4 font-mono text-[9px] font-medium uppercase tracking-[0.12em] text-sidebar-label">Administration</div>
-          <nav className="flex flex-col gap-0.5 px-2">
-            {administration.map((item) => (
-              <NavItem key={item.to} to={item.to} label={item.label} />
-            ))}
-          </nav>
-        </>
-      ) : null}
+        {administration.length > 0 ? (
+          <>
+            <div className="px-4 pb-2 pt-4 font-mono text-[9px] font-medium uppercase tracking-[0.12em] text-sidebar-label">Administration</div>
+            <nav className="flex flex-col gap-0.5 px-2">
+              {administration.map((item) => (
+                <NavItem key={item.to} to={item.to} label={item.label} />
+              ))}
+            </nav>
+          </>
+        ) : null}
+      </div>
 
-      <div className="mt-auto flex items-center gap-2.5 overflow-hidden border-t border-slate px-4 pt-3.5">
+      <div className="flex flex-none items-center gap-2.5 overflow-hidden border-t border-slate px-4 pt-3.5">
         <span className="flex h-[26px] w-[26px] flex-none items-center justify-center rounded-md bg-slate font-body text-[11px] font-semibold text-faint">
           {initials(admin?.name)}
         </span>
