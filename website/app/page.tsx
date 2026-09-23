@@ -1,28 +1,43 @@
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import { apiGet } from "@/lib/api";
-import type { ProductSummary } from "@/lib/types";
+import type { ProductSummary, ActiveBanner } from "@/lib/types";
 
 export default async function HomePage() {
-  const featured = await apiGet<ProductSummary[]>("/products/featured?limit=10", 60).catch(() => []);
+  const [featured, banner] = await Promise.all([
+    apiGet<ProductSummary[]>("/products/featured?limit=10", 60).catch(() => []),
+    apiGet<ActiveBanner>("/banner/active", 30).catch(() => null),
+  ]);
 
   return (
     <div className="mx-auto max-w-content px-5 py-6 sm:px-10">
       <section className="flex flex-col gap-4 sm:flex-row">
         <div
           className="flex flex-1 flex-col justify-center rounded-lg p-7 text-white sm:p-9"
-          style={{ background: "linear-gradient(100deg, rgb(var(--color-accent)), rgb(var(--color-accent-dark)))" }}
+          style={
+            banner?.banner_image_url
+              ? {
+                  backgroundImage: `linear-gradient(100deg, rgb(var(--color-ink) / 0.6), rgb(var(--color-ink) / 0.35)), url(${banner.banner_image_url})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }
+              : { background: "linear-gradient(100deg, rgb(var(--color-accent)), rgb(var(--color-accent-dark)))" }
+          }
         >
-          <span className="font-mono text-[10px] uppercase tracking-[0.12em] opacity-80">Banner · New season</span>
-          <h1 className="mt-2.5 font-display text-[30px] font-semibold leading-[1.15] tracking-tight sm:text-[38px]">The Monsoon Edit</h1>
+          <span className="font-mono text-[10px] uppercase tracking-[0.12em] opacity-80">
+            {banner?.banner_eyebrow || "Banner · New season"}
+          </span>
+          <h1 className="mt-2.5 font-display text-[30px] font-semibold leading-[1.15] tracking-tight sm:text-[38px]">
+            {banner?.banner_heading || "The Monsoon Edit"}
+          </h1>
           <p className="mt-1.5 max-w-[380px] text-[14px] opacity-90">
-            Up to 40% off across electronics, home and wardrobe — ends Sunday.
+            {banner?.banner_subtext || "Up to 40% off across electronics, home and wardrobe — ends Sunday."}
           </p>
           <Link
-            href="/products"
+            href={banner?.banner_cta_link || "/products"}
             className="btn-pill mt-5 inline-flex w-fit items-center bg-white px-5 py-2.5 font-body text-[12.5px] font-semibold text-accent-dark"
           >
-            Shop the edit
+            {banner?.banner_cta_label || "Shop the edit"}
           </Link>
         </div>
         <div className="flex flex-1 flex-col gap-3 sm:max-w-[280px]">

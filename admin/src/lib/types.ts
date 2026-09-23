@@ -205,6 +205,15 @@ export type DeliveryPaymentSettings = {
   payment_wallet_enabled: string;
 };
 
+export type BannerSettings = {
+  banner_eyebrow: string;
+  banner_heading: string;
+  banner_subtext: string;
+  banner_cta_label: string;
+  banner_cta_link: string;
+  banner_image_url: string;
+};
+
 export type ThemeTokens = {
   accent: string;
   accentDark: string;

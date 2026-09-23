@@ -18,6 +18,7 @@ import Configuration from "./pages/settings/Configuration";
 import Analytics from "./pages/analytics/Analytics";
 import DeliveryPayments from "./pages/delivery/DeliveryPayments";
 import Themes from "./pages/themes/Themes";
+import Banner from "./pages/banner/Banner";
 
 export default function App() {
   return (
@@ -42,6 +43,7 @@ export default function App() {
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/delivery-payments" element={<DeliveryPayments />} />
         <Route path="/themes" element={<Themes />} />
+        <Route path="/banner" element={<Banner />} />
       </Route>
     </Routes>
   );

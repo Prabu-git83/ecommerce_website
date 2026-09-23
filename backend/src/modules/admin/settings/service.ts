@@ -13,6 +13,12 @@ export const SETTING_KEYS = [
   "payment_card_enabled",
   "payment_upi_enabled",
   "payment_wallet_enabled",
+  "banner_eyebrow",
+  "banner_heading",
+  "banner_subtext",
+  "banner_cta_label",
+  "banner_cta_link",
+  "banner_image_url",
 ] as const;
 
 export type SettingKey = (typeof SETTING_KEYS)[number];
@@ -29,6 +35,12 @@ const DEFAULTS: Record<SettingKey, string> = {
   payment_card_enabled: "true",
   payment_upi_enabled: "true",
   payment_wallet_enabled: "true",
+  banner_eyebrow: "Banner · New season",
+  banner_heading: "The Monsoon Edit",
+  banner_subtext: "Up to 40% off across electronics, home and wardrobe — ends Sunday.",
+  banner_cta_label: "Shop the edit",
+  banner_cta_link: "/products",
+  banner_image_url: "",
 };
 
 export async function getSettings(): Promise<Record<SettingKey, string>> {

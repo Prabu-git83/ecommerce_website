@@ -23,6 +23,7 @@ const ADMINISTRATION: NavEntry[] = [
   { to: "/users", label: "Users & roles", show: (a) => a?.role === "super_admin" },
   { to: "/settings", label: "Configuration", show: (a) => a?.role === "super_admin" },
   { to: "/themes", label: "Themes", show: (a) => a?.role === "super_admin" },
+  { to: "/banner", label: "Homepage Banner", show: (a) => a?.role === "super_admin" },
 ];
 
 function initials(name?: string) {

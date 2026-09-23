@@ -9,6 +9,15 @@ export type ActiveTheme = {
   >;
 };
 
+export type ActiveBanner = {
+  banner_eyebrow: string;
+  banner_heading: string;
+  banner_subtext: string;
+  banner_cta_label: string;
+  banner_cta_link: string;
+  banner_image_url: string;
+};
+
 export type Category = {
   id: string;
   parentId: string | null;
