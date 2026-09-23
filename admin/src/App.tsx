@@ -16,6 +16,8 @@ import TicketDetail from "./pages/tickets/TicketDetail";
 import UsersList from "./pages/users/UsersList";
 import Configuration from "./pages/settings/Configuration";
 import Analytics from "./pages/analytics/Analytics";
+import DeliveryPayments from "./pages/delivery/DeliveryPayments";
+import Themes from "./pages/themes/Themes";
 
 export default function App() {
   return (
@@ -38,6 +40,8 @@ export default function App() {
         <Route path="/users" element={<UsersList />} />
         <Route path="/settings" element={<Configuration />} />
         <Route path="/analytics" element={<Analytics />} />
+        <Route path="/delivery-payments" element={<DeliveryPayments />} />
+        <Route path="/themes" element={<Themes />} />
       </Route>
     </Routes>
   );

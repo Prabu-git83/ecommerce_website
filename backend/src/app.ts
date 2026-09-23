@@ -16,6 +16,7 @@ import checkoutRoutes from "./modules/checkout/routes";
 import ordersRoutes from "./modules/orders/routes";
 import contactRoutes from "./modules/contact/routes";
 import ticketsRoutes from "./modules/tickets/routes";
+import publicThemesRoutes from "./modules/themes/routes";
 
 import adminAuthRoutes from "./modules/admin/auth/routes";
 import adminDashboardRoutes from "./modules/admin/dashboard/routes";
@@ -28,6 +29,8 @@ import adminTicketRoutes from "./modules/admin/tickets/routes";
 import adminUserRoutes from "./modules/admin/users/routes";
 import adminSettingsRoutes from "./modules/admin/settings/routes";
 import adminAnalyticsRoutes from "./modules/admin/analytics/routes";
+import adminDeliveryRoutes from "./modules/admin/delivery/routes";
+import adminThemeRoutes from "./modules/admin/themes/routes";
 
 export async function buildApp() {
   const app = Fastify({
@@ -62,6 +65,7 @@ export async function buildApp() {
       await v1.register(ordersRoutes);
       await v1.register(contactRoutes);
       await v1.register(ticketsRoutes);
+      await v1.register(publicThemesRoutes);
 
       await v1.register(
         async (admin) => {
@@ -77,6 +81,8 @@ export async function buildApp() {
           await admin.register(adminUserRoutes);
           await admin.register(adminSettingsRoutes);
           await admin.register(adminAnalyticsRoutes);
+          await admin.register(adminDeliveryRoutes);
+          await admin.register(adminThemeRoutes);
         },
         { prefix: "/admin" }
       );

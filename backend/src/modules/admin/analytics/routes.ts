@@ -4,7 +4,7 @@ import { ok } from "../../../lib/response";
 
 export default async function adminAnalyticsRoutes(app: FastifyInstance) {
   app.addHook("preHandler", async (request) => {
-    await app.requireAdminAuth(request);
+    await app.requireSuperAdmin(request);
   });
 
   app.get("/analytics", async () => {

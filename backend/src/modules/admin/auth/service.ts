@@ -5,8 +5,8 @@ import { verifyPassword } from "../../../lib/password";
 import { signAdminAccessToken } from "../../../lib/jwt";
 import { ApiError } from "../../../lib/errors";
 
-export function publicAdminUser(admin: { id: string; email: string; name: string; role: string }) {
-  return { id: admin.id, email: admin.email, name: admin.name, role: admin.role };
+export function publicAdminUser(admin: { id: string; email: string; name: string; role: string; permissions: string[] }) {
+  return { id: admin.id, email: admin.email, name: admin.name, role: admin.role, permissions: admin.permissions };
 }
 
 export async function login(email: string, password: string) {
@@ -17,6 +17,11 @@ export async function login(email: string, password: string) {
   if (!valid) throw ApiError.unauthorized("Invalid email or password", "invalid_credentials");
   if (admin.status !== "active") throw ApiError.forbidden("This admin account is not active", "account_inactive");
 
-  const accessToken = await signAdminAccessToken({ sub: admin.id, role: "admin", adminRole: admin.role });
+  const accessToken = await signAdminAccessToken({
+    sub: admin.id,
+    role: "admin",
+    adminRole: admin.role,
+    adminPermissions: admin.permissions,
+  });
   return { admin, accessToken };
 }

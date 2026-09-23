@@ -181,6 +181,7 @@ export type AdminUser = {
   name: string;
   email: string;
   role: string;
+  permissions: string[];
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -194,6 +195,32 @@ export type PlatformSettings = {
   support_email: string;
   support_hours: string;
 };
+
+export type DeliveryPaymentSettings = {
+  free_shipping_threshold: string;
+  delivery_days_estimate: string;
+  payment_cod_enabled: string;
+  payment_card_enabled: string;
+  payment_upi_enabled: string;
+  payment_wallet_enabled: string;
+};
+
+export type ThemeTokens = {
+  accent: string;
+  accentDark: string;
+  accentSoft: string;
+  ink: string;
+  slate: string;
+  paper: string;
+  chrome: string;
+  border: string;
+  muted: string;
+  faint: string;
+};
+
+export type ThemeDef = { id: string; name: string; description: string; tokens: ThemeTokens };
+
+export type ThemesResponse = { themes: ThemeDef[]; activeThemeId: string };
 
 export type Analytics = {
   totals: { totalRevenue: number; totalOrders: number; avgOrderValue: number; totalCustomers: number };

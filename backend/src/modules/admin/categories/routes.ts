@@ -14,7 +14,7 @@ const categoryInputSchema = z.object({
 
 export default async function adminCategoryRoutes(app: FastifyInstance) {
   app.addHook("preHandler", async (request) => {
-    await app.requireAdminAuth(request);
+    await app.requirePermission(request, ["categories"]);
   });
 
   app.get("/categories", async () => {

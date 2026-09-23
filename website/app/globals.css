@@ -2,16 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme tokens as "R G B" triplets so Tailwind's rgb(var(--x) / <alpha-value>)
+   colors (see tailwind.config.ts) still support opacity modifiers like
+   bg-accent/35. Defaults below are the "Signal" theme; the root layout
+   overrides them per-request from the super admin's assigned theme
+   (GET /themes/active) via an inline <style> block, so there's no
+   client-side flash of the wrong theme. */
+:root {
+  --color-accent: 31 99 214;
+  --color-accent-dark: 22 75 166;
+  --color-accent-soft: 238 244 254;
+  --color-ink: 15 23 42;
+  --color-slate: 30 41 59;
+  --color-paper: 248 250 252;
+  --color-chrome: 232 237 243;
+  --color-border: 226 232 240;
+  --color-muted: 71 85 105;
+  --color-faint: 148 163 184;
+}
+
 html {
-  background: #f8fafc;
+  background: rgb(var(--color-paper));
 }
 
 body {
-  color: #0f172a;
+  color: rgb(var(--color-ink));
 }
 
 ::selection {
-  background: #1f63d6;
+  background: rgb(var(--color-accent));
   color: #fff;
 }
 
@@ -20,20 +39,20 @@ body {
   font-size: 10.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #94a3b8;
+  color: rgb(var(--color-faint));
 }
 
 .rule {
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid rgb(var(--color-border));
 }
 
 .rule-strong {
-  border-bottom: 1.5px solid #0f172a;
+  border-bottom: 1.5px solid rgb(var(--color-ink));
 }
 
 .card {
   background: #fff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid rgb(var(--color-border));
   border-radius: 8px;
 }
 
@@ -54,25 +73,25 @@ body {
 }
 
 .btn-primary {
-  background: #1f63d6;
+  background: rgb(var(--color-accent));
   color: #fff;
-  box-shadow: 0 2px 6px rgba(31, 99, 214, 0.32);
+  box-shadow: 0 2px 6px rgb(var(--color-accent) / 0.32);
 }
 
 .btn-primary:hover {
-  background: #164ba6;
+  background: rgb(var(--color-accent-dark));
 }
 
 input,
 select,
 textarea {
   background: #fff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid rgb(var(--color-border));
   border-radius: 8px;
   padding: 10px 13px;
   font-family: var(--font-body), sans-serif;
   font-size: 13.5px;
-  color: #0f172a;
+  color: rgb(var(--color-ink));
   outline: none;
   transition: border-color 0.12s ease, box-shadow 0.12s ease;
 }
@@ -80,13 +99,13 @@ textarea {
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: #1f63d6;
-  box-shadow: 0 0 0 3px #eef4fe;
+  border-color: rgb(var(--color-accent));
+  box-shadow: 0 0 0 3px rgb(var(--color-accent-soft));
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: #94a3b8;
+  color: rgb(var(--color-faint));
 }
 
 .status-pill {

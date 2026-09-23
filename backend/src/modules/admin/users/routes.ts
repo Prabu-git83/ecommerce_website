@@ -2,12 +2,13 @@ import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import * as usersService from "./service";
 import { ok } from "../../../lib/response";
+import { PERMISSION_KEYS } from "../../../lib/permissions";
 
-const ROLES = ["admin", "manager", "support", "viewer"] as const;
+const permissionsSchema = z.array(z.enum(PERMISSION_KEYS));
 
 export default async function adminUserRoutes(app: FastifyInstance) {
   app.addHook("preHandler", async (request) => {
-    await app.requireAdminAuth(request);
+    await app.requireSuperAdmin(request);
   });
 
   app.get("/users", async () => {
@@ -21,7 +22,7 @@ export default async function adminUserRoutes(app: FastifyInstance) {
         name: z.string().min(1).max(200),
         email: z.string().email(),
         password: z.string().min(8).max(100),
-        role: z.enum(ROLES).default("support"),
+        permissions: permissionsSchema.default([]),
       })
       .parse(request.body);
     const created = await usersService.createUser(body);
@@ -31,7 +32,7 @@ export default async function adminUserRoutes(app: FastifyInstance) {
 
   app.put("/users/:id", async (request) => {
     const { id } = z.object({ id: z.string().uuid() }).parse(request.params);
-    const body = z.object({ name: z.string().min(1).max(200).optional(), role: z.enum(ROLES).optional() }).parse(request.body);
+    const body = z.object({ name: z.string().min(1).max(200).optional(), permissions: permissionsSchema.optional() }).parse(request.body);
     const updated = await usersService.updateUser(id, body);
     return ok(updated);
   });

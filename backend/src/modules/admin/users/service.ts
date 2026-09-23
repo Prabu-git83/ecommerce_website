@@ -14,20 +14,23 @@ export async function listUsers() {
   return rows.map(publicUser);
 }
 
-export async function createUser(input: { name: string; email: string; password: string; role: string }) {
+export async function createUser(input: { name: string; email: string; password: string; permissions: string[] }) {
   const existing = await db.query.adminUsers.findFirst({ where: eq(adminUsers.email, input.email) });
   if (existing) throw ApiError.conflict("An admin with this email already exists", "email_taken");
   const passwordHash = await hashPassword(input.password);
   const [created] = await db
     .insert(adminUsers)
-    .values({ name: input.name, email: input.email, passwordHash, role: input.role })
+    .values({ name: input.name, email: input.email, passwordHash, role: "admin", permissions: input.permissions })
     .returning();
   return publicUser(created);
 }
 
-export async function updateUser(id: string, input: { name?: string; role?: string }) {
+export async function updateUser(id: string, input: { name?: string; permissions?: string[] }) {
   const existing = await db.query.adminUsers.findFirst({ where: eq(adminUsers.id, id) });
   if (!existing) throw ApiError.notFound("Admin user not found");
+  if (existing.role === "super_admin" && input.permissions) {
+    throw ApiError.badRequest("The super admin already has full access", "super_admin_has_full_access");
+  }
   const [updated] = await db
     .update(adminUsers)
     .set({ ...input, updatedAt: new Date() })
@@ -42,6 +45,9 @@ export async function updateStatus(id: string, status: "active" | "suspended", r
   }
   const existing = await db.query.adminUsers.findFirst({ where: eq(adminUsers.id, id) });
   if (!existing) throw ApiError.notFound("Admin user not found");
+  if (existing.role === "super_admin") {
+    throw ApiError.badRequest("The super admin account can't be suspended", "cannot_suspend_super_admin");
+  }
   const [updated] = await db.update(adminUsers).set({ status, updatedAt: new Date() }).where(eq(adminUsers.id, id)).returning();
   return publicUser(updated);
 }

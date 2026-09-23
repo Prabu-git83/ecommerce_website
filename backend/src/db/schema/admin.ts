@@ -1,15 +1,20 @@
-import { pgTable, uuid, varchar, text, integer, numeric, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, text, integer, numeric, timestamp, jsonb } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { productVariants, warehouses } from "./catalogue";
 import { payments } from "./orders";
 import { contactMessages } from "./misc";
 
+// `role` is either "super_admin" (implicit full access, exactly one expected)
+// or "admin" (scoped access — see `permissions`, a subset of PERMISSION_KEYS
+// in ../../lib/permissions.ts). Baked into the admin JWT at login, so a
+// permissions change takes effect on that admin's next sign-in.
 export const adminUsers = pgTable("admin_users", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   passwordHash: text("password_hash").notNull(),
   name: varchar("name", { length: 200 }).notNull(),
   role: varchar("role", { length: 30 }).notNull().default("admin"),
+  permissions: jsonb("permissions").$type<string[]>().notNull().default([]),
   status: varchar("status", { length: 20 }).notNull().default("active"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

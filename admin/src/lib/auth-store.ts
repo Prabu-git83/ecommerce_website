@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type AdminUser = { id: string; email: string; name: string; role: string };
+export type AdminUser = { id: string; email: string; name: string; role: string; permissions: string[] };
 
 type AuthState = {
   accessToken: string | null;

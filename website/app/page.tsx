@@ -11,7 +11,7 @@ export default async function HomePage() {
       <section className="flex flex-col gap-4 sm:flex-row">
         <div
           className="flex flex-1 flex-col justify-center rounded-lg p-7 text-white sm:p-9"
-          style={{ background: "linear-gradient(100deg, #1F63D6, #164BA6)" }}
+          style={{ background: "linear-gradient(100deg, rgb(var(--color-accent)), rgb(var(--color-accent-dark)))" }}
         >
           <span className="font-mono text-[10px] uppercase tracking-[0.12em] opacity-80">Banner · New season</span>
           <h1 className="mt-2.5 font-display text-[30px] font-semibold leading-[1.15] tracking-tight sm:text-[38px]">The Monsoon Edit</h1>

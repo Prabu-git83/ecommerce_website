@@ -3,27 +3,35 @@ import type { Config } from "tailwindcss";
 // Design tokens lifted from the "1a — Signal" mockup: brand blue on light
 // slate, bordered/rounded cards, dense utility-first layout, filters and
 // status always visible.
+//
+// The brand/decorative tokens below (paper/chrome/border/ink/slate/muted/
+// faint/accent*) read from CSS custom properties defined in globals.css, so
+// a super admin can re-theme the live site by swapping those variables —
+// see themes.ts on the backend and the <style> override in app/layout.tsx.
+// rgb(var(--x) / <alpha-value>) keeps opacity modifiers (e.g. bg-accent/35)
+// working. Functional/status colors (success/warning/warn) stay fixed hex
+// across every theme so stock/order-status meaning never varies.
 const config: Config = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        paper: "#F8FAFC",
-        chrome: "#E8EDF3",
+        paper: "rgb(var(--color-paper) / <alpha-value>)",
+        chrome: "rgb(var(--color-chrome) / <alpha-value>)",
         surface: "#FFFFFF",
         stripe: "#E3E9F1",
         border: {
-          DEFAULT: "#E2E8F0",
-          strong: "#D7DEE7",
-          faint: "#CBD5E1",
+          DEFAULT: "rgb(var(--color-border) / <alpha-value>)",
+          strong: "rgb(var(--color-border) / <alpha-value>)",
+          faint: "rgb(var(--color-border) / <alpha-value>)",
         },
-        ink: "#0F172A",
-        slate: "#1E293B",
-        muted: "#475569",
-        faint: "#94A3B8",
-        accent: "#1F63D6",
-        "accent-dark": "#164BA6",
-        "accent-soft": "#EEF4FE",
+        ink: "rgb(var(--color-ink) / <alpha-value>)",
+        slate: "rgb(var(--color-slate) / <alpha-value>)",
+        muted: "rgb(var(--color-muted) / <alpha-value>)",
+        faint: "rgb(var(--color-faint) / <alpha-value>)",
+        accent: "rgb(var(--color-accent) / <alpha-value>)",
+        "accent-dark": "rgb(var(--color-accent-dark) / <alpha-value>)",
+        "accent-soft": "rgb(var(--color-accent-soft) / <alpha-value>)",
         success: "#16A34A",
         "success-soft": "#ECFDF3",
         "success-text": "#166534",

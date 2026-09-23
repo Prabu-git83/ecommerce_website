@@ -24,10 +24,10 @@ export default function Login() {
     setSubmitting(true);
     setError(null);
     try {
-      const res = await apiPost<{ admin: { id: string; email: string; name: string; role: string }; accessToken: string }>(
-        "/admin/auth/login",
-        { email, password }
-      );
+      const res = await apiPost<{
+        admin: { id: string; email: string; name: string; role: string; permissions: string[] };
+        accessToken: string;
+      }>("/admin/auth/login", { email, password });
       setSession(res);
       navigate("/");
     } catch (err) {
@@ -67,7 +67,7 @@ export default function Login() {
           </form>
         </div>
 
-        <p className="mt-5 text-center font-mono text-[11px] text-faint">Demo credentials — admin@arca.local / admin123</p>
+        <p className="mt-5 text-center font-mono text-[11px] text-faint">Super admin — admin@arca.local / admin123</p>
       </div>
     </div>
   );

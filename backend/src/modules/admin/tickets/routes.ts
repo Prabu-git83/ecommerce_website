@@ -7,7 +7,7 @@ const STATUSES = ["new", "open", "resolved", "closed"] as const;
 
 export default async function adminTicketRoutes(app: FastifyInstance) {
   app.addHook("preHandler", async (request) => {
-    await app.requireAdminAuth(request);
+    await app.requirePermission(request, ["tickets"]);
   });
 
   app.get("/tickets", async (request) => {

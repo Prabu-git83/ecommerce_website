@@ -47,7 +47,7 @@ export default function Header({ categories }: { categories: Category[] }) {
           </Link>
 
           <form onSubmit={submitSearch} className="hidden max-w-[460px] flex-1 lg:block">
-            <div className="flex h-[38px] items-center gap-2 rounded-lg border border-border bg-chrome/60 px-3.5 focus-within:border-accent focus-within:bg-white focus-within:shadow-[0_0_0_3px_#EEF4FE]">
+            <div className="flex h-[38px] items-center gap-2 rounded-lg border border-border bg-chrome/60 px-3.5 focus-within:border-accent focus-within:bg-white focus-within:shadow-[0_0_0_3px_rgb(var(--color-accent-soft))]">
               <span className="h-3 w-3 flex-none rounded-full border-[1.5px] border-faint" />
               <input
                 value={query}

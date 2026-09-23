@@ -8,6 +8,11 @@ export const SETTING_KEYS = [
   "currency",
   "support_email",
   "support_hours",
+  "delivery_days_estimate",
+  "payment_cod_enabled",
+  "payment_card_enabled",
+  "payment_upi_enabled",
+  "payment_wallet_enabled",
 ] as const;
 
 export type SettingKey = (typeof SETTING_KEYS)[number];
@@ -19,6 +24,11 @@ const DEFAULTS: Record<SettingKey, string> = {
   currency: "INR",
   support_email: "support@arca.local",
   support_hours: "Monday-Saturday, 10am-7pm IST",
+  delivery_days_estimate: "3-5",
+  payment_cod_enabled: "true",
+  payment_card_enabled: "true",
+  payment_upi_enabled: "true",
+  payment_wallet_enabled: "true",
 };
 
 export async function getSettings(): Promise<Record<SettingKey, string>> {

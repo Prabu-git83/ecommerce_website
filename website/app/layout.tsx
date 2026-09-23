@@ -6,7 +6,20 @@ import Footer from "@/components/Footer";
 import CartHydrator from "@/components/CartHydrator";
 import AuthHydrator from "@/components/AuthHydrator";
 import { apiGet } from "@/lib/api";
-import type { Category } from "@/lib/types";
+import type { Category, ActiveTheme } from "@/lib/types";
+
+const TOKEN_VAR: Record<keyof ActiveTheme["tokens"], string> = {
+  accent: "--color-accent",
+  accentDark: "--color-accent-dark",
+  accentSoft: "--color-accent-soft",
+  ink: "--color-ink",
+  slate: "--color-slate",
+  paper: "--color-paper",
+  chrome: "--color-chrome",
+  border: "--color-border",
+  muted: "--color-muted",
+  faint: "--color-faint",
+};
 
 const display = IBM_Plex_Sans({ subsets: ["latin"], variable: "--font-display", weight: ["500", "600", "700"] });
 const body = IBM_Plex_Sans({ subsets: ["latin"], variable: "--font-body", weight: ["400", "500", "600", "700"] });
@@ -18,10 +31,23 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const categories = await apiGet<Category[]>("/categories", 300).catch(() => [] as Category[]);
+  const [categories, theme] = await Promise.all([
+    apiGet<Category[]>("/categories", 300).catch(() => [] as Category[]),
+    apiGet<ActiveTheme>("/themes/active", 30).catch(() => null),
+  ]);
+
+  // Inline style on <html> beats any stylesheet's :root rule on specificity
+  // alone, so the active theme applies deterministically regardless of how
+  // Next.js orders globals.css relative to this server-rendered markup —
+  // and since this renders server-side, there's no flash of the old theme.
+  const themeStyle = theme
+    ? (Object.fromEntries(
+        Object.entries(theme.tokens).map(([key, value]) => [TOKEN_VAR[key as keyof ActiveTheme["tokens"]], value])
+      ) as React.CSSProperties)
+    : undefined;
 
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`} style={themeStyle}>
       <body className="min-h-screen bg-paper font-body text-ink antialiased">
         <CartHydrator />
         <AuthHydrator />

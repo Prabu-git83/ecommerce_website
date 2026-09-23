@@ -31,6 +31,7 @@ export type AdminTokenPayload = {
   sub: string;
   role: "admin";
   adminRole: string;
+  adminPermissions: string[];
 };
 
 export async function signAdminAccessToken(payload: AdminTokenPayload): Promise<string> {

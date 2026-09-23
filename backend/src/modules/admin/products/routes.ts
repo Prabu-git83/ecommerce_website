@@ -45,7 +45,7 @@ const variantSchema = z.object({
 
 export default async function adminProductRoutes(app: FastifyInstance) {
   app.addHook("preHandler", async (request) => {
-    await app.requireAdminAuth(request);
+    await app.requirePermission(request, ["products"]);
   });
 
   app.get("/products", async (request) => {

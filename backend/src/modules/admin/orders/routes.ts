@@ -23,7 +23,7 @@ const refundSchema = z.object({
 
 export default async function adminOrderRoutes(app: FastifyInstance) {
   app.addHook("preHandler", async (request) => {
-    await app.requireAdminAuth(request);
+    await app.requirePermission(request, ["orders"]);
   });
 
   app.get("/orders", async (request) => {

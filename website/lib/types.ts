@@ -1,5 +1,14 @@
 export type Money = number;
 
+export type ActiveTheme = {
+  id: string;
+  name: string;
+  tokens: Record<
+    "accent" | "accentDark" | "accentSoft" | "ink" | "slate" | "paper" | "chrome" | "border" | "muted" | "faint",
+    string
+  >;
+};
+
 export type Category = {
   id: string;
   parentId: string | null;

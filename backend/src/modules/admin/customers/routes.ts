@@ -5,7 +5,7 @@ import { ok } from "../../../lib/response";
 
 export default async function adminCustomerRoutes(app: FastifyInstance) {
   app.addHook("preHandler", async (request) => {
-    await app.requireAdminAuth(request);
+    await app.requireSuperAdmin(request);
   });
 
   app.get("/customers", async (request) => {

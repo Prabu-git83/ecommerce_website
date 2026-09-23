@@ -13,7 +13,7 @@ const adjustSchema = z.object({
 
 export default async function adminInventoryRoutes(app: FastifyInstance) {
   app.addHook("preHandler", async (request) => {
-    await app.requireAdminAuth(request);
+    await app.requirePermission(request, ["inventory"]);
   });
 
   app.get("/warehouses", async () => {
