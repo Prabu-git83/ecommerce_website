@@ -9,6 +9,7 @@ const TABS = [
   { href: "/account", label: "Profile" },
   { href: "/account/addresses", label: "Addresses" },
   { href: "/account/orders", label: "Orders" },
+  { href: "/account/tickets", label: "Tickets" },
 ];
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {

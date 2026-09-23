@@ -15,6 +15,7 @@ import cartRoutes from "./modules/cart/routes";
 import checkoutRoutes from "./modules/checkout/routes";
 import ordersRoutes from "./modules/orders/routes";
 import contactRoutes from "./modules/contact/routes";
+import ticketsRoutes from "./modules/tickets/routes";
 
 import adminAuthRoutes from "./modules/admin/auth/routes";
 import adminDashboardRoutes from "./modules/admin/dashboard/routes";
@@ -60,6 +61,7 @@ export async function buildApp() {
       await v1.register(checkoutRoutes);
       await v1.register(ordersRoutes);
       await v1.register(contactRoutes);
+      await v1.register(ticketsRoutes);
 
       await v1.register(
         async (admin) => {

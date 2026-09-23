@@ -92,6 +92,16 @@ export type Address = {
   isDefault: boolean;
 };
 
+export type TicketSummary = {
+  id: string;
+  subject: string | null;
+  message: string;
+  status: string;
+  createdAt: string;
+};
+
+export type TicketDetail = TicketSummary & { name: string; email: string };
+
 export type User = {
   id: string;
   email: string;

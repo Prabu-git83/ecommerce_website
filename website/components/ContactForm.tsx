@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Field from "./Field";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/v1";
+import { apiPost, ApiClientError } from "@/lib/client-api";
+import { useAuthStore } from "@/lib/stores/auth-store";
 
 const schema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -17,6 +18,7 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 export default function ContactForm() {
+  const user = useAuthStore((s) => s.user);
   const [sent, setSent] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const {
@@ -28,24 +30,28 @@ export default function ContactForm() {
 
   async function onSubmit(values: FormValues) {
     setServerError(null);
-    const res = await fetch(`${API_URL}/contact`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
-    });
-    const json = await res.json();
-    if (!res.ok || json.error) {
-      setServerError(json.error?.message ?? "Could not send your message");
-      return;
+    try {
+      await apiPost("/contact", values);
+      setSent(true);
+      reset();
+    } catch (err) {
+      setServerError(err instanceof ApiClientError ? err.message : "Could not send your message");
     }
-    setSent(true);
-    reset();
   }
 
   if (sent) {
     return (
       <div className="rounded-lg border border-accent/40 bg-accent/10 px-5 py-4 text-[13.5px] text-accent">
         Thanks — we received your message and will reply within 1-2 business days.
+        {user ? (
+          <>
+            {" "}
+            <Link href="/account/tickets" className="font-semibold underline">
+              Track it in My tickets
+            </Link>
+            .
+          </>
+        ) : null}
       </div>
     );
   }

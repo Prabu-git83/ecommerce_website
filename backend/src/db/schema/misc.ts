@@ -4,6 +4,7 @@ import { productVariants } from "./catalogue";
 
 export const contactMessages = pgTable("contact_messages", {
   id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
   name: varchar("name", { length: 200 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
   subject: varchar("subject", { length: 300 }),

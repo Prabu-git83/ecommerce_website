@@ -15,7 +15,7 @@ const contactSchema = z.object({
 export default async function contactRoutes(app: FastifyInstance) {
   app.post("/contact", async (request, reply) => {
     const body = contactSchema.parse(request.body);
-    const [created] = await db.insert(contactMessages).values(body).returning();
+    const [created] = await db.insert(contactMessages).values({ ...body, userId: request.userId }).returning();
     sendMail(body.email, "We received your message", emailTemplates.contactReceived(body.name)).catch(() => {});
     reply.status(201);
     return ok({ id: created.id, success: true });
