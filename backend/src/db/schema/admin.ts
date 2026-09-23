@@ -51,7 +51,9 @@ export const customerNotes = pgTable("customer_notes", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
-// Internal reply/resolution log on a support ticket (a contact_messages row).
+// Reply thread on a support ticket (a contact_messages row). Visible to the
+// customer on their account's ticket detail page, so treat `note` as
+// customer-facing copy, not an internal-only log.
 export const ticketReplies = pgTable("ticket_replies", {
   id: uuid("id").primaryKey().defaultRandom(),
   ticketId: uuid("ticket_id").notNull().references(() => contactMessages.id, { onDelete: "cascade" }),

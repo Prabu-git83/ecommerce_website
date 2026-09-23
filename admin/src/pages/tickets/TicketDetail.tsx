@@ -92,9 +92,10 @@ export default function TicketDetail() {
           </div>
 
           <div className="mt-8">
-            <div className="eyebrow mb-3">Internal replies</div>
+            <div className="eyebrow mb-3">Replies</div>
+            <p className="mb-3 text-[11.5px] text-faint">Visible to the customer on their account&apos;s ticket page.</p>
             {ticket.replies.length === 0 ? (
-              <p className="text-[13px] text-muted">No replies logged yet.</p>
+              <p className="text-[13px] text-muted">No replies yet.</p>
             ) : (
               <div className="flex flex-col gap-3">
                 {ticket.replies.map((r) => (
@@ -107,8 +108,8 @@ export default function TicketDetail() {
             )}
 
             <form onSubmit={submitReply} className="mt-4">
-              <Field label="Log a reply / resolution note">
-                <textarea rows={3} value={note} onChange={(e) => setNote(e.target.value)} placeholder="What did you tell the customer?" />
+              <Field label="Reply to the customer">
+                <textarea rows={3} value={note} onChange={(e) => setNote(e.target.value)} placeholder="This will be visible to the customer…" />
               </Field>
               {replyError ? <p className="mt-1.5 text-[12px] text-warn">{replyError}</p> : null}
               <button
@@ -116,7 +117,7 @@ export default function TicketDetail() {
                 disabled={savingReply || !note.trim()}
                 className="btn-pill mt-2 flex h-9 items-center justify-center btn-primary px-5 text-[12.5px] font-medium disabled:opacity-50"
               >
-                {savingReply ? "Saving…" : "Add reply"}
+                {savingReply ? "Saving…" : "Send reply"}
               </button>
             </form>
           </div>

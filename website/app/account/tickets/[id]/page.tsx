@@ -37,8 +37,24 @@ export default function TicketDetailPage() {
       <div className="mt-6 max-w-[560px]">
         <p className="text-[13px] text-muted">{STATUS_HELP[ticket.status] ?? ""}</p>
 
-        <div className="card mt-4 p-4">
-          <div className="whitespace-pre-wrap text-[13.5px] leading-relaxed text-ink">{ticket.message}</div>
+        <div className="mt-4 flex flex-col gap-3">
+          <div className="card p-4">
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="text-[12px] font-semibold text-ink">You</span>
+              <span className="font-mono text-[10.5px] text-faint">{formatDate(ticket.createdAt)}</span>
+            </div>
+            <div className="mt-1.5 whitespace-pre-wrap text-[13.5px] leading-relaxed text-ink">{ticket.message}</div>
+          </div>
+
+          {ticket.replies.map((r) => (
+            <div key={r.id} className="card border-accent/25 bg-accent-soft p-4">
+              <div className="flex items-baseline justify-between gap-3">
+                <span className="text-[12px] font-semibold text-accent-dark">Arca Support</span>
+                <span className="font-mono text-[10.5px] text-faint">{formatDate(r.createdAt)}</span>
+              </div>
+              <div className="mt-1.5 whitespace-pre-wrap text-[13.5px] leading-relaxed text-ink">{r.note}</div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

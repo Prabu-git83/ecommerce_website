@@ -1,6 +1,6 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { db } from "../../db/client";
-import { contactMessages } from "../../db/schema/index";
+import { contactMessages, ticketReplies } from "../../db/schema/index";
 import { ApiError } from "../../lib/errors";
 
 export async function listTickets(userId: string) {
@@ -15,5 +15,11 @@ export async function getTicket(userId: string, id: string) {
     where: and(eq(contactMessages.id, id), eq(contactMessages.userId, userId)),
   });
   if (!ticket) throw ApiError.notFound("Ticket not found");
-  return ticket;
+
+  const replies = await db.query.ticketReplies.findMany({
+    where: eq(ticketReplies.ticketId, id),
+    orderBy: [asc(ticketReplies.createdAt)],
+  });
+
+  return { ...ticket, replies: replies.map((r) => ({ id: r.id, note: r.note, createdAt: r.createdAt })) };
 }

@@ -100,7 +100,9 @@ export type TicketSummary = {
   createdAt: string;
 };
 
-export type TicketDetail = TicketSummary & { name: string; email: string };
+export type TicketReply = { id: string; note: string; createdAt: string };
+
+export type TicketDetail = TicketSummary & { name: string; email: string; replies: TicketReply[] };
 
 export type User = {
   id: string;
