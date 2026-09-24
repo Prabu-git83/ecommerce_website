@@ -1,4 +1,4 @@
-export const PERMISSION_KEYS = ["products", "categories", "inventory", "tickets", "orders", "delivery", "payments", "configuration", "themes", "banner"] as const;
+export const PERMISSION_KEYS = ["products", "categories", "inventory", "tickets", "orders", "delivery", "payments", "configuration", "themes", "banner", "logo"] as const;
 export type PermissionKey = (typeof PERMISSION_KEYS)[number];
 
 export const PERMISSION_LABELS: Record<PermissionKey, string> = {
@@ -12,6 +12,7 @@ export const PERMISSION_LABELS: Record<PermissionKey, string> = {
   configuration: "Configuration",
   themes: "Themes",
   banner: "Homepage banner",
+  logo: "Logo",
 };
 
 export function hasPermission(

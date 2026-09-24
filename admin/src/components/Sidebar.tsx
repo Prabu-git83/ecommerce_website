@@ -24,6 +24,7 @@ const ADMINISTRATION: NavEntry[] = [
   { to: "/settings", label: "Configuration", show: (a) => hasPermission(a, "configuration") },
   { to: "/themes", label: "Themes", show: (a) => hasPermission(a, "themes") },
   { to: "/banner", label: "Homepage Banner", show: (a) => hasPermission(a, "banner") },
+  { to: "/logo", label: "Logo", show: (a) => hasPermission(a, "logo") },
 ];
 
 function initials(name?: string) {

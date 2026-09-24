@@ -19,6 +19,7 @@ export const SETTING_KEYS = [
   "banner_cta_label",
   "banner_cta_link",
   "banner_image_url",
+  "site_logo_url",
 ] as const;
 
 export type SettingKey = (typeof SETTING_KEYS)[number];
@@ -41,6 +42,7 @@ const DEFAULTS: Record<SettingKey, string> = {
   banner_cta_label: "Shop the edit",
   banner_cta_link: "/products",
   banner_image_url: "",
+  site_logo_url: "",
 };
 
 export async function getSettings(): Promise<Record<SettingKey, string>> {

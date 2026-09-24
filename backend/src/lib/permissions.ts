@@ -2,7 +2,7 @@
 // admin. Dashboard is always visible to any authenticated admin; Customers,
 // Analytics, and Users & roles remain super-admin-only and are not part of
 // this delegable set.
-export const PERMISSION_KEYS = ["products", "categories", "inventory", "tickets", "orders", "delivery", "payments", "configuration", "themes", "banner"] as const;
+export const PERMISSION_KEYS = ["products", "categories", "inventory", "tickets", "orders", "delivery", "payments", "configuration", "themes", "banner", "logo"] as const;
 
 export type PermissionKey = (typeof PERMISSION_KEYS)[number];
 

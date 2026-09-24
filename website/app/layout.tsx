@@ -31,10 +31,12 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const [categories, theme] = await Promise.all([
+  const [categories, theme, logo] = await Promise.all([
     apiGet<Category[]>("/categories", 300).catch(() => [] as Category[]),
     apiGet<ActiveTheme>("/themes/active", 30).catch(() => null),
+    apiGet<{ site_logo_url: string }>("/logo/active", 30).catch(() => null),
   ]);
+  const logoUrl = logo?.site_logo_url || undefined;
 
   // Inline style on <html> beats any stylesheet's :root rule on specificity
   // alone, so the active theme applies deterministically regardless of how
@@ -51,9 +53,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="min-h-screen bg-paper font-body text-ink antialiased">
         <CartHydrator />
         <AuthHydrator />
-        <Header categories={categories} />
+        <Header categories={categories} logoUrl={logoUrl} />
         <main>{children}</main>
-        <Footer />
+        <Footer logoUrl={logoUrl} />
       </body>
     </html>
   );

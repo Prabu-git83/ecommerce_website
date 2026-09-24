@@ -1,12 +1,14 @@
 import Link from "next/link";
 
-export default function Footer() {
+export default function Footer({ logoUrl }: { logoUrl?: string }) {
   return (
     <footer className="mt-16 border-t border-border bg-surface">
       <div className="mx-auto max-w-content px-5 py-12 sm:px-10">
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-4">
           <div>
-            <div className="font-display text-lg font-extrabold text-ink">ARCA</div>
+            <div className="font-display text-lg font-extrabold text-ink">
+              {logoUrl ? <img src={logoUrl} alt="ARCA" className="h-8 w-auto max-w-[160px] object-contain" /> : "ARCA"}
+            </div>
             <p className="mt-3 max-w-[220px] text-[13px] leading-relaxed text-muted">
               Forty pieces chosen each season, across electronics, home and wardrobe.
             </p>

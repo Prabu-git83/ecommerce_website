@@ -7,7 +7,7 @@ import { useCartStore } from "@/lib/stores/cart-store";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import type { Category } from "@/lib/types";
 
-export default function Header({ categories }: { categories: Category[] }) {
+export default function Header({ categories, logoUrl }: { categories: Category[]; logoUrl?: string }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [query, setQuery] = useState("");
   const itemCount = useCartStore((s) => s.itemCount);
@@ -43,7 +43,7 @@ export default function Header({ categories }: { categories: Category[] }) {
       <div className="border-b border-border bg-surface">
         <div className="mx-auto flex max-w-content items-center gap-6 px-5 py-3.5 sm:px-10">
           <Link href="/" className="font-display text-xl font-bold tracking-tight text-ink">
-            ARCA
+            {logoUrl ? <img src={logoUrl} alt="ARCA" className="h-8 w-auto max-w-[160px] object-contain" /> : "ARCA"}
           </Link>
 
           <form onSubmit={submitSearch} className="hidden max-w-[460px] flex-1 lg:block">

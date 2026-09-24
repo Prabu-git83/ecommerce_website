@@ -205,6 +205,8 @@ export type DeliveryPaymentSettings = {
   payment_wallet_enabled: string;
 };
 
+export type LogoSettings = { site_logo_url: string };
+
 export type BannerSettings = {
   banner_eyebrow: string;
   banner_heading: string;
