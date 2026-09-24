@@ -21,9 +21,9 @@ const SUPPORT: NavEntry[] = [
 const ADMINISTRATION: NavEntry[] = [
   { to: "/analytics", label: "Analytics", show: (a) => a?.role === "super_admin" },
   { to: "/users", label: "Users & roles", show: (a) => a?.role === "super_admin" },
-  { to: "/settings", label: "Configuration", show: (a) => a?.role === "super_admin" },
-  { to: "/themes", label: "Themes", show: (a) => a?.role === "super_admin" },
-  { to: "/banner", label: "Homepage Banner", show: (a) => a?.role === "super_admin" },
+  { to: "/settings", label: "Configuration", show: (a) => hasPermission(a, "configuration") },
+  { to: "/themes", label: "Themes", show: (a) => hasPermission(a, "themes") },
+  { to: "/banner", label: "Homepage Banner", show: (a) => hasPermission(a, "banner") },
 ];
 
 function initials(name?: string) {

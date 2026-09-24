@@ -8,7 +8,7 @@ const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "i
 
 export default async function adminBannerRoutes(app: FastifyInstance) {
   app.addHook("preHandler", async (request) => {
-    await app.requireSuperAdmin(request);
+    await app.requirePermission(request, ["banner"]);
   });
 
   app.get("/banner", async () => {

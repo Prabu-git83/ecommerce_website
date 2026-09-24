@@ -6,7 +6,7 @@ import { ok } from "../../../lib/response";
 
 export default async function adminThemeRoutes(app: FastifyInstance) {
   app.addHook("preHandler", async (request) => {
-    await app.requireSuperAdmin(request);
+    await app.requirePermission(request, ["themes"]);
   });
 
   app.get("/themes", async () => {
