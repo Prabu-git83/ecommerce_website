@@ -26,7 +26,7 @@ export default function Header({ categories, logoUrl }: { categories: Category[]
   return (
     <header className="sticky top-0 z-40">
       {/* utility bar */}
-      <div className="hidden bg-ink px-5 py-1.5 font-body text-[11px] text-border-faint sm:flex sm:items-center sm:justify-between sm:px-10">
+      <div className="hidden bg-inverse px-5 py-1.5 font-body text-[11px] text-white/70 sm:flex sm:items-center sm:justify-between sm:px-10">
         <span>Free delivery over ₹999 · COD available</span>
         <span className="flex gap-4">
           <Link href="/account/orders" className="hover:text-white">
@@ -47,7 +47,7 @@ export default function Header({ categories, logoUrl }: { categories: Category[]
           </Link>
 
           <form onSubmit={submitSearch} className="hidden max-w-[460px] flex-1 lg:block">
-            <div className="flex h-[38px] items-center gap-2 rounded-lg border border-border bg-chrome/60 px-3.5 focus-within:border-accent focus-within:bg-white focus-within:shadow-[0_0_0_3px_rgb(var(--color-accent-soft))]">
+            <div className="flex h-[38px] items-center gap-2 rounded-lg border border-border bg-chrome/60 px-3.5 focus-within:border-accent focus-within:bg-surface focus-within:shadow-[0_0_0_3px_rgb(var(--color-accent-soft))]">
               <span className="h-3 w-3 flex-none rounded-full border-[1.5px] border-faint" />
               <input
                 value={query}

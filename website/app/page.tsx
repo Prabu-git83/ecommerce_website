@@ -17,7 +17,7 @@ export default async function HomePage() {
           style={
             banner?.banner_image_url
               ? {
-                  backgroundImage: `linear-gradient(100deg, rgb(var(--color-ink) / 0.6), rgb(var(--color-ink) / 0.35)), url(${banner.banner_image_url})`,
+                  backgroundImage: `linear-gradient(100deg, rgb(var(--color-inverse) / 0.6), rgb(var(--color-inverse) / 0.35)), url(${banner.banner_image_url})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }
@@ -35,7 +35,7 @@ export default async function HomePage() {
           </p>
           <Link
             href={banner?.banner_cta_link || "/products"}
-            className="btn-pill mt-5 inline-flex w-fit items-center bg-white px-5 py-2.5 font-body text-[12.5px] font-semibold text-accent-dark"
+            className="btn-pill mt-5 inline-flex w-fit items-center bg-surface px-5 py-2.5 font-body text-[12.5px] font-semibold text-accent-ink"
           >
             {banner?.banner_cta_label || "Shop the edit"}
           </Link>

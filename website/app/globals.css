@@ -19,6 +19,9 @@
   --color-border: 226 232 240;
   --color-muted: 71 85 105;
   --color-faint: 148 163 184;
+  --color-surface: 255 255 255;
+  --color-inverse: 15 23 42;
+  --color-accent-ink: 22 75 166;
 }
 
 html {
@@ -51,13 +54,13 @@ body {
 }
 
 .card {
-  background: #fff;
+  background: rgb(var(--color-surface));
   border: 1px solid rgb(var(--color-border));
   border-radius: 8px;
 }
 
 .stripe-placeholder {
-  background-image: repeating-linear-gradient(45deg, #eef2f7, #eef2f7 7px, #e3e9f1 7px, #e3e9f1 14px);
+  background-image: repeating-linear-gradient(45deg, rgb(var(--color-chrome)), rgb(var(--color-chrome)) 7px, rgb(var(--color-border)) 7px, rgb(var(--color-border)) 14px);
 }
 
 /* Signal uses rounded-lg (8px) for buttons/chips, reserving full pill shape
@@ -85,7 +88,7 @@ body {
 input,
 select,
 textarea {
-  background: #fff;
+  background: rgb(var(--color-surface));
   border: 1px solid rgb(var(--color-border));
   border-radius: 8px;
   padding: 10px 13px;

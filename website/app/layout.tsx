@@ -19,6 +19,9 @@ const TOKEN_VAR: Record<keyof ActiveTheme["tokens"], string> = {
   border: "--color-border",
   muted: "--color-muted",
   faint: "--color-faint",
+  surface: "--color-surface",
+  inverse: "--color-inverse",
+  accentInk: "--color-accent-ink",
 };
 
 const display = IBM_Plex_Sans({ subsets: ["latin"], variable: "--font-display", weight: ["500", "600", "700"] });

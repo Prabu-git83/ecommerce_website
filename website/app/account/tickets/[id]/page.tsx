@@ -49,7 +49,7 @@ export default function TicketDetailPage() {
           {ticket.replies.map((r) => (
             <div key={r.id} className="card border-accent/25 bg-accent-soft p-4">
               <div className="flex items-baseline justify-between gap-3">
-                <span className="text-[12px] font-semibold text-accent-dark">Arca Support</span>
+                <span className="text-[12px] font-semibold text-accent-ink">Arca Support</span>
                 <span className="font-mono text-[10.5px] text-faint">{formatDate(r.createdAt)}</span>
               </div>
               <div className="mt-1.5 whitespace-pre-wrap text-[13.5px] leading-relaxed text-ink">{r.note}</div>

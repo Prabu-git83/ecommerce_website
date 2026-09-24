@@ -4,7 +4,7 @@ export type ActiveTheme = {
   id: string;
   name: string;
   tokens: Record<
-    "accent" | "accentDark" | "accentSoft" | "ink" | "slate" | "paper" | "chrome" | "border" | "muted" | "faint",
+    "accent" | "accentDark" | "accentSoft" | "ink" | "slate" | "paper" | "chrome" | "border" | "muted" | "faint" | "surface" | "inverse" | "accentInk",
     string
   >;
 };

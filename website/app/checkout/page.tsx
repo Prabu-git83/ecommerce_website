@@ -365,7 +365,7 @@ function NewAddressForm({ onCreated }: { onCreated: (addr: Address) => void }) {
         <button
           type="submit"
           disabled={saving}
-          className="btn-pill flex h-10 items-center justify-center bg-ink px-6 text-[12.5px] font-medium text-white disabled:opacity-50"
+          className="btn-pill flex h-10 items-center justify-center bg-inverse px-6 text-[12.5px] font-medium text-white disabled:opacity-50"
         >
           {saving ? "Saving…" : "Save address"}
         </button>

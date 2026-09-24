@@ -18,7 +18,9 @@ const config: Config = {
       colors: {
         paper: "rgb(var(--color-paper) / <alpha-value>)",
         chrome: "rgb(var(--color-chrome) / <alpha-value>)",
-        surface: "#FFFFFF",
+        surface: "rgb(var(--color-surface) / <alpha-value>)",
+        inverse: "rgb(var(--color-inverse) / <alpha-value>)",
+        "accent-ink": "rgb(var(--color-accent-ink) / <alpha-value>)",
         stripe: "#E3E9F1",
         border: {
           DEFAULT: "rgb(var(--color-border) / <alpha-value>)",

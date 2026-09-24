@@ -93,7 +93,7 @@ export default function AddToCartPanel({ variants }: { variants: ProductVariant[
                     disabled={disabled && target.id === v.id}
                     className={`btn-pill border px-3.5 py-2 font-body text-[12px] font-medium ${
                       isActive
-                        ? "border-accent bg-accent-soft text-accent-dark"
+                        ? "border-accent bg-accent-soft text-accent-ink"
                         : disabled
                           ? "border-border text-faint line-through"
                           : "border-border text-muted hover:border-accent"

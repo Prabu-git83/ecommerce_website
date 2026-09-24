@@ -227,6 +227,9 @@ export type ThemeTokens = {
   border: string;
   muted: string;
   faint: string;
+  surface: string;
+  inverse: string;
+  accentInk: string;
 };
 
 export type ThemeDef = { id: string; name: string; description: string; tokens: ThemeTokens };

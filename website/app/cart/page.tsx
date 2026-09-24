@@ -123,7 +123,7 @@ export default function CartPage() {
                 placeholder="Coupon code"
                 className="!py-2 flex-1 !text-[12px] uppercase"
               />
-              <button type="submit" className="btn-pill bg-ink px-3.5 text-[12px] font-medium text-white">
+              <button type="submit" className="btn-pill bg-inverse px-3.5 text-[12px] font-medium text-white">
                 Apply
               </button>
             </form>
