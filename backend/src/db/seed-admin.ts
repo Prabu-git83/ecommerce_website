@@ -12,9 +12,9 @@ import { hashPassword } from "../lib/password";
 async function main() {
   const existingAdmin = await db.query.adminUsers.findFirst({ where: eq(adminUsers.email, "admin@arca.local") });
   if (!existingAdmin) {
-    const passwordHash = await hashPassword("admin123");
+    const passwordHash = await hashPassword(process.env.ADMIN_INITIAL_PASSWORD ?? "admin123");
     await db.insert(adminUsers).values({ email: "admin@arca.local", passwordHash, name: "Admin", role: "admin" });
-    console.log("Created admin user: admin@arca.local / admin123");
+    console.log("Created admin user: admin@arca.local");
   } else {
     console.log("Admin user already exists, skipping.");
   }

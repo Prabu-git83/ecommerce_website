@@ -234,14 +234,14 @@ async function main() {
     { code: "ELECTRONICS10", type: "percent", value: "10", minSubtotal: "0" },
   ]);
 
-  const adminPasswordHash = await hashPassword("admin123");
+  const adminPasswordHash = await hashPassword(process.env.ADMIN_INITIAL_PASSWORD ?? "admin123");
   await db.insert(adminUsers).values({
     email: "admin@arca.local",
     passwordHash: adminPasswordHash,
     name: "Admin",
     role: "admin",
   });
-  console.log("Seeded admin user: admin@arca.local / admin123");
+  console.log("Seeded admin user: admin@arca.local (password from ADMIN_INITIAL_PASSWORD, default admin123)");
 
   console.log(`Seeded ${productDefs.length} products across ${categoryDefs.length} top-level categories.`);
   await queryClient.end();

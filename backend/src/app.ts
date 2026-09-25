@@ -50,7 +50,7 @@ export async function buildApp() {
   });
   await app.register(cookie, { secret: env.COOKIE_SECRET });
   await app.register(multipart, {
-    limits: { fileSize: 8 * 1024 * 1024, files: 8 },
+    limits: { fileSize: env.MAX_UPLOAD_MB * 1024 * 1024, files: 8 },
   });
 
   registerErrorHandler(app);

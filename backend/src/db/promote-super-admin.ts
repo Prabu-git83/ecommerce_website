@@ -21,7 +21,7 @@ async function main() {
     await db.update(adminUsers).set({ role: "super_admin", updatedAt: new Date() }).where(eq(adminUsers.id, admin.id));
     console.log(`Promoted ${SUPER_ADMIN_EMAIL} to super_admin.`);
   }
-  console.log(`Super admin credentials: ${SUPER_ADMIN_EMAIL} / admin123`);
+  console.log(`Super admin login: ${SUPER_ADMIN_EMAIL} (password = ADMIN_INITIAL_PASSWORD used at seed time; default admin123 - change it before going public)`);
   await queryClient.end();
 }
 

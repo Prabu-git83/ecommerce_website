@@ -22,6 +22,7 @@ export default fp(async (app: FastifyInstance) => {
         path: "/",
         httpOnly: true,
         sameSite: "lax",
+        secure: env.NODE_ENV === "production",
         maxAge: 60 * 60 * 24 * 90,
       });
     }

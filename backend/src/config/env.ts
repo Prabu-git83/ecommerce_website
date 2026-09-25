@@ -7,7 +7,10 @@ const envSchema = z.object({
   HOST: z.string().default("0.0.0.0"),
 
   DATABASE_URL: z.string().url(),
-  REDIS_URL: z.string().default("redis://localhost:6379"),
+  // true when DATABASE_URL points at a transaction-mode pooler (e.g. Supabase :6543), which disallows prepared statements
+  DATABASE_POOLED: z.enum(["true","false"]).default("false"),
+  DATABASE_POOL_MAX: z.coerce.number().default(10),
+  MAX_UPLOAD_MB: z.coerce.number().default(8),
 
   JWT_ACCESS_SECRET: z.string().min(16),
   JWT_REFRESH_SECRET: z.string().min(16),
@@ -23,6 +26,9 @@ const envSchema = z.object({
 
   SMTP_HOST: z.string().default("localhost"),
   SMTP_PORT: z.coerce.number().default(1025),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  SMTP_SECURE: z.enum(["true","false"]).default("false"),
   SMTP_FROM: z.string().default("Arca <no-reply@arca.local>"),
 
   WEB_APP_URL: z.string().default("http://localhost:3000"),

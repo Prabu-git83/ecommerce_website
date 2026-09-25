@@ -1,6 +1,9 @@
 import type { ApiEnvelope } from "./types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/v1";
+// Server-side calls use the absolute API_URL; the browser bundle uses NEXT_PUBLIC_API_URL,
+// which in production is the same-origin path "/v1" proxied by next.config.mjs rewrites
+// (keeps the guest-cart cookie first-party).
+const API_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/v1";
 
 // Server Component helper for public, unauthenticated catalogue data (SSR/SEO pages).
 export async function apiGet<T>(path: string, revalidate = 60): Promise<T> {
