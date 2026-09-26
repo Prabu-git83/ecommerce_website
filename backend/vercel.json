@@ -1,6 +1,6 @@
 {
   "buildCommand": "npm run build:vercel",
-  "installCommand": "cd .. && npm install",
+  "installCommand": "cd .. && npm install --include=dev",
   "rewrites": [{ "source": "/(.*)", "destination": "/api" }],
   "functions": {
     "api/index.js": { "includeFiles": "dist/**", "maxDuration": 30 }
