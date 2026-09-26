@@ -10,6 +10,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     await app.ready();
     return app;
   });
+  // Don't cache a failed startup for the life of the warm lambda.
+  ready.catch(() => {
+    ready = undefined;
+  });
   const app = await ready;
   app.server.emit("request", req, res);
 }
