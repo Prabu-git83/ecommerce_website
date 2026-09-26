@@ -1,5 +1,7 @@
 "use client";
 
+import { Suspense } from "react";
+
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import PlaceholderImage from "@/components/PlaceholderImage";
@@ -10,7 +12,7 @@ import type { OrderDetail } from "@/lib/types";
 
 const CANCELLABLE = new Set(["pending", "confirmed", "processing"]);
 
-export default function OrderDetailPage() {
+function OrderDetailContent() {
   const { id } = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const [order, setOrder] = useState<OrderDetail | null>(null);
@@ -135,5 +137,13 @@ function Row({ label, value }: { label: string; value: string }) {
       <span>{label}</span>
       <span>{value}</span>
     </div>
+  );
+}
+
+export default function OrderDetailPage() {
+  return (
+    <Suspense fallback={null}>
+      <OrderDetailContent />
+    </Suspense>
   );
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import { Suspense } from "react";
+
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -19,7 +21,7 @@ const STEPS: { key: Step; label: string }[] = [
   { key: "payment", label: "4 PAYMENT" },
 ];
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const orderId = searchParams.get("orderId");
@@ -371,5 +373,13 @@ function NewAddressForm({ onCreated }: { onCreated: (addr: Address) => void }) {
         </button>
       </div>
     </form>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={null}>
+      <CheckoutContent />
+    </Suspense>
   );
 }
