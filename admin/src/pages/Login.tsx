@@ -67,7 +67,9 @@ export default function Login() {
           </form>
         </div>
 
-        <p className="mt-5 text-center font-mono text-[11px] text-faint">Super admin — admin@arca.local / admin123</p>
+        {import.meta.env.DEV ? (
+          <p className="mt-5 text-center font-mono text-[11px] text-faint">Super admin — admin@arca.local / admin123</p>
+        ) : null}
       </div>
     </div>
   );
