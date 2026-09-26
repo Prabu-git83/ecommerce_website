@@ -38,4 +38,7 @@ const envSchema = z.object({
   CART_COOKIE_NAME: z.string().default("arca_cart"),
 });
 
-export const env = envSchema.parse(process.env);
+// Hosting dashboards often store blank values; treat those as unset so schema defaults apply.
+const raw = Object.fromEntries(Object.entries(process.env).filter(([, v]) => v !== undefined && v.trim() !== ""));
+
+export const env = envSchema.parse(raw);
